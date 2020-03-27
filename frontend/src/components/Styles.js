@@ -1,13 +1,24 @@
 import { makeStyles } from "@material-ui/core/styles";
 
 export const useStyles = makeStyles(theme => ({
-  formRoot: {
-    "& .MuiTextField-root": {
-      margin: theme.spacing(1),
-      width: "25ch"
-    },
-    root: {
-      margin: "5%"
-    }
+  root: {
+    margin: "10%",
+    marginLeft: "auto",
+    marginRight: "auto",
+    padding: "3%",
+    paddingLeft: "0%",
+    width: "40%",
+    height: "50%"
+  },
+  form: {
+    marginLeft: "0%",
+    paddingLeft: "0%"
+  },
+  textBox: {
+    width: "60%"
+  },
+
+  inputStyle: {
+    padding: "2.5%"
   }
 }));
