@@ -25,6 +25,18 @@ function LoginForm() {
             defaultValue="Enter username"
             value={user}
             onChange={e => setUser(e.target.value)}
+            InputLabelProps={{
+              classes: {
+                root: classes.inputColour,
+                focused: classes.cssFocused
+              }
+            }}
+            InputProps={{
+              style: {
+                color: "white",
+                borderBottom: "2px solid white"
+              }
+            }}
           />
         </div>
         <div className={classes.inputStyle}>
@@ -32,6 +44,18 @@ function LoginForm() {
             required
             id="standard-password-input"
             className={classes.textBox}
+            InputLabelProps={{
+              classes: {
+                root: classes.inputColour,
+                focused: classes.cssFocused
+              }
+            }}
+            InputProps={{
+              style: {
+                color: "white",
+                borderBottom: "2px solid white"
+              }
+            }}
             label="Password"
             type="password"
             autoComplete="current-password"
@@ -41,12 +65,7 @@ function LoginForm() {
         </div>
       </form>
       <div className={classes.inputStyle}>
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          className={classes.textBox}
-        >
+        <Button variant="contained" size="large" className={classes.textBox}>
           Login
         </Button>
       </div>

@@ -8,7 +8,9 @@ export const useStyles = makeStyles(theme => ({
     padding: "3%",
     paddingLeft: "0%",
     width: "40%",
-    height: "50%"
+    height: "50%",
+    color: "white !important",
+    backgroundColor: "#484848 !important"
   },
   form: {
     marginLeft: "0%",
@@ -16,6 +18,9 @@ export const useStyles = makeStyles(theme => ({
   },
   textBox: {
     width: "60%"
+  },
+  inputColour: {
+    color: "white !important"
   },
 
   inputStyle: {
