@@ -22,7 +22,9 @@ export const useStyles = makeStyles(theme => ({
   inputColour: {
     color: "white !important"
   },
-
+  card: {
+    maxWidth: 345
+  },
   inputStyle: {
     padding: "2.5%"
   }
