@@ -13,7 +13,7 @@ export const useStyles = makeStyles(theme => ({
     backgroundColor: "#484848 !important"
   },
   backGroundStyle: {
-    paddingTop: "12%"
+    paddingTop: "3%"
   },
   form: {
     marginLeft: "0%",
@@ -30,5 +30,9 @@ export const useStyles = makeStyles(theme => ({
   },
   inputStyle: {
     padding: "2.5%"
+  },
+  header: {
+    display: "flex",
+    paddingTop: "2.5%"
   }
 }));

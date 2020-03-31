@@ -5,12 +5,14 @@ import "../App.css";
 import desktopImage from "./Assets/background.png";
 import mobileImage from "./Assets/background-mobile.png";
 import { useStyles } from "./Styles";
+import LoginHeader from "./loginHeader";
 
 const Background = ({ comp }) => {
   const imageUrl = useWindowWidth() >= 650 ? desktopImage : mobileImage;
   const classes = useStyles();
   return (
     <div className="App" style={{ backgroundImage: `url(${imageUrl})` }}>
+      <LoginHeader />
       <div className={classes.backGroundStyle}>{comp}</div>
     </div>
   );
