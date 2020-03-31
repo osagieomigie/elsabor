@@ -2,7 +2,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 export const useStyles = makeStyles(theme => ({
   root: {
-    margin: "10%",
+    //marginTop: "10%",
     marginLeft: "auto",
     marginRight: "auto",
     padding: "3%",
@@ -11,6 +11,9 @@ export const useStyles = makeStyles(theme => ({
     height: "50%",
     color: "white !important",
     backgroundColor: "#484848 !important"
+  },
+  backGroundStyle: {
+    paddingTop: "12%"
   },
   form: {
     marginLeft: "0%",

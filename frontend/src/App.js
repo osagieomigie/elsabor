@@ -10,9 +10,15 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Route path="/" exact component= {LoginForm} />
-        <Route path="/background" component={Background} />
-        <Route path="/register" component={RegistrationForm} />
+        <Route
+          path="/"
+          exact
+          render={props => <Background comp={<LoginForm />} />}
+        />
+        <Route
+          path="/register"
+          render={props => <Background comp={<RegistrationForm />} />}
+        />
         <Route path="/deal" component={DealTile} />
       </div>
     </Router>
