@@ -9,15 +9,16 @@ const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1
   },
-  menuButton: {
-    marginRight: theme.spacing(2)
-  },
   title: {
     paddingRight: "2.5%",
     color: "white"
   },
   logo: {
-    paddingRight: "70%"
+    paddingRight: "65%",
+    // eslint-disable-next-line
+    ["@media (max-width: 320px)"]: {
+      paddingRight: "0%"
+    }
   },
   eSabor: {
     paddingRight: "2%"
@@ -37,12 +38,9 @@ function LoginAppBar() {
         style={{ background: "transparent", boxShadow: "none", color: "black" }}
       >
         <Toolbar>
-          <Typography variant="h6" className={classes.eSabor}>
-            Logo
-          </Typography>
-          <Typography variant="h6" className={classes.logo}>
-            EL Sabor
-          </Typography>
+          <div className={classes.logo}>
+            <img src={require("./Assets/Elsabor_logo.png")} alt={"logo"} />
+          </div>
           <Typography variant="h7" className={classes.title}>
             Join now
           </Typography>
