@@ -26,8 +26,11 @@ export const useStyles = makeStyles((theme) => ({
     color: "white !important",
   },
   card: {
+    minWidth: 290,
+    minHeight: 300,
     maxWidth: 345,
     margin: "2%",
+    marginBottom: "10%",
   },
   inputStyle: {
     padding: "2.5%",
@@ -35,5 +38,8 @@ export const useStyles = makeStyles((theme) => ({
   header: {
     display: "flex",
     paddingTop: "2.5%",
+  },
+  discoverDeals: {
+    paddingTop: "20%",
   },
 }));

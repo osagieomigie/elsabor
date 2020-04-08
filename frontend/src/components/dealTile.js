@@ -7,7 +7,7 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
 
-function DealTile() {
+function DealTile({ deal, description, qrCode, expiryDate }) {
   const [flipped, setFlipped] = useState(false);
   const classes = useStyles();
 
@@ -28,10 +28,13 @@ function DealTile() {
           />
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">
-              Beans
+              {deal}
+            </Typography>
+            <Typography gutterBottom variant="h5" component="h2">
+              {description}
             </Typography>
             <Typography variant="body2" color="textSecondary" component="p">
-              We are offering beans at our new location now
+              {}
             </Typography>
           </CardContent>
         </CardActionArea>
@@ -51,7 +54,7 @@ function DealTile() {
               QR CODE
             </Typography>
             <Typography variant="body2" color="textSecondary" component="p">
-              QR CODE
+              {qrCode}
             </Typography>
           </CardContent>
         </CardActionArea>
