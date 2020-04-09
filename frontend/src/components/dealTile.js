@@ -54,8 +54,20 @@ function DealTile({ deal, description, qrCode, expiryDate }) {
               QR CODE
             </Typography>
             <Typography variant="body2" color="textSecondary" component="p">
+              {`Expires ${expiryDate}`}
+              {""}
+            </Typography>
+            <Typography variant="body2" color="textSecondary" component="p">
               {qrCode}
             </Typography>
+            <button
+              className={classes.dealTileButton}
+              onClick={() => {
+                alert("deals should be saved to users account ");
+              }}
+            >
+              Get Deal
+            </button>
           </CardContent>
         </CardActionArea>
       </Card>

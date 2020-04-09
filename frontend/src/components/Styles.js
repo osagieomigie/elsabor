@@ -42,4 +42,10 @@ export const useStyles = makeStyles((theme) => ({
   discoverDeals: {
     paddingTop: "20%",
   },
+  dealTileButton: {
+    width: "50%",
+    height: "40%",
+    backgroundColor: "red",
+    color: "white",
+  },
 }));
