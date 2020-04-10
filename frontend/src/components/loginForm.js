@@ -4,6 +4,7 @@ import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import { Link } from "react-router-dom";
 
 function LoginForm() {
   const classes = useStyles();
@@ -24,18 +25,18 @@ function LoginForm() {
             label="Username"
             defaultValue="Enter username"
             value={user}
-            onChange={e => setUser(e.target.value)}
+            onChange={(e) => setUser(e.target.value)}
             InputLabelProps={{
               classes: {
                 root: classes.inputColour,
-                focused: classes.cssFocused
-              }
+                focused: classes.cssFocused,
+              },
             }}
             InputProps={{
               style: {
                 color: "white",
-                borderBottom: "2px solid white"
-              }
+                borderBottom: "2px solid white",
+              },
             }}
           />
         </div>
@@ -47,27 +48,33 @@ function LoginForm() {
             InputLabelProps={{
               classes: {
                 root: classes.inputColour,
-                focused: classes.cssFocused
-              }
+                focused: classes.cssFocused,
+              },
             }}
             InputProps={{
               style: {
                 color: "white",
-                borderBottom: "2px solid white"
-              }
+                borderBottom: "2px solid white",
+              },
             }}
             label="Password"
             type="password"
             autoComplete="current-password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
           />
         </div>
       </form>
       <div className={classes.inputStyle}>
-        <Button variant="contained" size="large" className={classes.textBox}>
-          Login
-        </Button>
+        <Link
+          onClick={(e) => (!user || !password ? e.preventDefault() : null)}
+          to={`/dashboard?username=${user}&password=${password}`}
+          className={classes.linkStyle}
+        >
+          <Button variant="contained" size="large" className={classes.textBox}>
+            Login
+          </Button>
+        </Link>
       </div>
 
       <div>
@@ -76,9 +83,11 @@ function LoginForm() {
         </Typography>
       </div>
       <div className={classes.inputStyle}>
-        <Typography variant="h8" component="h8">
-          New to El Sabor? Join now
-        </Typography>
+        <Link to={`/register`} className={classes.linkStyle}>
+          <Typography variant="h8" component="h8">
+            New to El Sabor? Join now
+          </Typography>
+        </Link>
       </div>
     </Paper>
   );

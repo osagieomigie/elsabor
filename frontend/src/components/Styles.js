@@ -25,6 +25,10 @@ export const useStyles = makeStyles((theme) => ({
   inputColour: {
     color: "white !important",
   },
+  linkStyle: {
+    color: "inherit",
+    textDecoration: "inherit",
+  },
   card: {
     minWidth: 290,
     minHeight: 300,
