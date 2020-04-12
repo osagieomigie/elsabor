@@ -12,9 +12,12 @@ import Typography from "@material-ui/core/Typography";
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import SaveIcon from '@material-ui/icons/Save';
+import SearchHeader from "./searchHeader";
+import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { Grid } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
+  // General CSS settings
   root: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -22,44 +25,53 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'rgb(243, 244, 246)',
     height: '100%',
   },
-  margin: {
-    marginBottom: '5vh',
-  },
+  // Style code for the left side of the grid (Title, Avatar, Name)
   leftSide: {
-    marginTop: '10vh',
+    marginTop: '0vh',
   },
+  // Style code just for the title of the page
   title: {
     textAlign: 'left',
     paddingBottom: '10vh',
     marginLeft: '10vw',
   },
+  // Style code just for the Avatar profile pic
   image: {
     width: '15vw',
     height: '15vw',
     marginLeft: '10vw',
   },
+  // Style code for the user's name beneath the avatar pic
   profileName: {
     marginTop: '3vh',
     textAlign: 'left',
     marginLeft: '10vw',
   },
+  // Style code for the right side of the grid (all the Text Forms and Save button)
   rightSide: {
     textAlign: 'left',
-    marginTop: '25vh',
+    marginTop: '15vh',
   },
+  // Style code for all the textfields/text forms 
   textField: {
     width: '30vw',
     backgroundColor: 'white',
+    marginBottom: '3vh',
   },
+  // Style code for just the Save Button below all the Text Forms
   saveButton: {
     height: '5vh',
     width: '30vw',
     backgroundColor: 'red',
   },
+  input: {
+    display: 'none',
+  },
 }));
 
 export default function InputAdornments() {
   const classes = useStyles();
+  // All values needed for the user
   const [values, setValues] = React.useState({
     username: '',
     email: '',
@@ -70,26 +82,62 @@ export default function InputAdornments() {
     showPassword: false,
   });
 
+  // Handling changes to the user values above as the user changes the text forms
   const handleChange = (prop) => (event) => {
     setValues({ ...values, [prop]: event.target.value });
   };
 
+  // Handling when the user selects to see the password, changing the password to visible
   const handleClickShowPassword = () => {
     setValues({ ...values, showPassword: !values.showPassword });
   };
-
   const handleMouseDownPassword = (event) => {
     event.preventDefault();
   };
 
+  const handleImageUpload = e => {
+    const [file] = e.target.files;
+    if (file) {
+      const reader = new FileReader();
+      const {current} = uploadedImage;
+      console.log(uploadedImage.current);
+      current.file = file;
+      reader.onload = (e) => {
+          current.src = e.target.result;
+      }
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Declaring the image path based on the users image path/image name
   const IMG = require(`./Assets/${values.imagepath}`)
+
+  const uploadedImage = React.useRef(null);
 
   return (
     <div className={classes.root}>
+    <SearchHeader/>
+    
     <Grid container spacing={1}>
         <Grid item className={classes.leftSide} xs={6}>
             <Typography variant="h2" className={classes.title}>Account Details</Typography>
-            <Avatar alt="Profile Pic" src={IMG} className={classes.image} />
+            <Avatar className={classes.image}> 
+              <img 
+                src={IMG}
+                ref={uploadedImage}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  position: "absolute"
+                }}
+              /> 
+            </Avatar>
+            <input accept="image/x-png,image/jpeg" className={classes.input} onChange={handleImageUpload} id="icon-button-file" type="file" />
+            <label htmlFor="icon-button-file">
+              <IconButton color="primary" aria-label="upload picture" component="span">
+                <PhotoCamera />
+              </IconButton>
+            </label>
             <Typography variant="h3" className={classes.profileName}>{values.firstname + " " + values.lastname}</Typography>
         </Grid>
         <Grid item className={classes.rightSide} xs={6}>
@@ -109,7 +157,7 @@ export default function InputAdornments() {
                 id="outlined-adornment-email"
                 value={values.email}
                 onChange={handleChange('email')}
-                labelWidth={70}
+                labelWidth={40}
             />
             </FormControl>
 
@@ -142,7 +190,7 @@ export default function InputAdornments() {
                 id="outlined-adornment-firstname"
                 value={values.firstname}
                 onChange={handleChange('firstname')}
-                labelWidth={70}
+                labelWidth={80}
             />
             </FormControl>
 
@@ -152,7 +200,7 @@ export default function InputAdornments() {
                 id="outlined-adornment-lastname"
                 value={values.lastname}
                 onChange={handleChange('lastname')}
-                labelWidth={70}
+                labelWidth={80}
             />
             </FormControl>
 
