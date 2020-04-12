@@ -5,7 +5,7 @@ import RegistrationForm from "./components/registrationForm.js";
 import Background from "./components/background-red-slash.js";
 import UserDashboard from "./components/userDashboard.js";
 import Profile from "./components/profile.js";
-import SearchHeader from "./components/searchHeader.js";
+import SearchPage from "./components/searchPage.js";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
 function App() {
@@ -23,6 +23,7 @@ function App() {
         />
         <Route path="/dashboard" component={UserDashboard} />
         <Route path="/profile" component={Profile} />
+        <Route path="/search" component={SearchPage} />
       </div>
     </Router>
   );
