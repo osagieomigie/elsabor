@@ -13,30 +13,27 @@ function LoginForm() {
   const [auth, setAuth] = useState(false); // password hook
 
   const loginHandler = () => {
-    const data = { email: "test@123.com", password: "test" };
+    // const data = { email: "test@123.com", password: "test" };
     fetch("https://elsabor.herokuapp.com/users/login", {
       method: "POST",
-      mode: "cors",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type":"application/x-www-form-urlencoded"
       },
-
-      body: JSON.stringify(data),
+      body:`email=${user}&password=${password}`,
     })
-      .then((response) => {
-        //response.json();
-        console.log(response);
+      .then(response => {
         console.log(`Status code ${response.status}`);
-        if (response.status === 200) {
-          setAuth(true);
-        }
-      })
-      .then((data) => {
-        console.log(data);
+          if (response.status === 200) {
+            setAuth(true);
+          }
+        response.text().then(result =>{
+          console.log(result);
+        })
+
       })
       .catch((error) => {
-        console.error("Error: ", error);
-      });
+      console.error("Error: ", error);
+    });
   };
 
   return (
