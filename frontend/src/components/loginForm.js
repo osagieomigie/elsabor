@@ -10,6 +10,34 @@ function LoginForm() {
   const classes = useStyles();
   const [user, setUser] = useState(""); // user name hook
   const [password, setPassword] = useState(""); // password hook
+  const [auth, setAuth] = useState(false); // password hook
+
+  const loginHandler = () => {
+    const data = { email: "test@123.com", password: "test" };
+    fetch("https://elsabor.herokuapp.com/users/login", {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        //response.json();
+        console.log(response);
+        console.log(`Status code ${response.status}`);
+        if (response.status === 200) {
+          setAuth(true);
+        }
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
+  };
 
   return (
     <Paper className={classes.root}>
@@ -64,31 +92,37 @@ function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-      </form>
-      <div className={classes.inputStyle}>
-        <Link
-          onClick={(e) => (!user || !password ? e.preventDefault() : null)}
-          to={`/dashboard?username=${user}&password=${password}`}
-          className={classes.linkStyle}
-        >
-          <Button variant="contained" size="large" className={classes.textBox}>
-            Login
-          </Button>
-        </Link>
-      </div>
 
-      <div>
-        <Typography variant="h8" component="h8">
-          Forgot password?
-        </Typography>
-      </div>
-      <div className={classes.inputStyle}>
-        <Link to={`/register`} className={classes.linkStyle}>
+        <div className={classes.inputStyle}>
+          <Link
+            to={`/dashboard?username=${user}`}
+            onClick={(e) => (!auth ? e.preventDefault() : null)}
+            className={classes.linkStyle}
+          >
+            <Button
+              variant="contained"
+              size="large"
+              className={classes.textBox}
+              onClick={loginHandler}
+            >
+              Login
+            </Button>
+          </Link>
+        </div>
+
+        <div>
           <Typography variant="h8" component="h8">
-            New to El Sabor? Join now
+            Forgot password?
           </Typography>
-        </Link>
-      </div>
+        </div>
+        <div className={classes.inputStyle}>
+          <Link to={`/register`} className={classes.linkStyle}>
+            <Typography variant="h8" component="h8">
+              New to El Sabor? Join now
+            </Typography>
+          </Link>
+        </div>
+      </form>
     </Paper>
   );
 }
