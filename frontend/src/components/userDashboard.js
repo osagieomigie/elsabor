@@ -4,6 +4,7 @@ import Carousel from "react-material-ui-carousel";
 import DealTile from "./dealTile.js";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
+import PersistentDrawerLeft from "./searchHeader.js";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -94,7 +95,13 @@ function UserDashboard() {
   const classes = useStyles();
   return (
     <div className={classes.root}>
-      <Typography variant="h5" gutterBottom className={classes.textA}>
+      <PersistentDrawerLeft />
+      <Typography
+        variant="h5"
+        gutterBottom
+        className={classes.textA}
+        style={{ marginTop: "10%" }}
+      >
         Your Favourites
       </Typography>
       <Typography variant="subtitle1" gutterBottom className={classes.textB}>

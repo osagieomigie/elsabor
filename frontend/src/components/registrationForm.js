@@ -4,6 +4,7 @@ import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
+import Checkbox from "@material-ui/core/Checkbox";
 import { Link } from "react-router-dom";
 
 function RegistrationForm() {
@@ -17,7 +18,13 @@ function RegistrationForm() {
       <Typography variant="h4" component="h1">
         El Sabor
       </Typography>
-      <form className={classes.form} noValidate autoComplete="off">
+      <form
+        className={classes.form}
+        noValidate
+        autoComplete="off"
+        action="https://elsabor.herokuapp.com/users/register"
+        method="post"
+      >
         <div className={classes.inputStyle}>
           <TextField
             required
@@ -87,20 +94,34 @@ function RegistrationForm() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
+
+        <div className={classes.inputStyle}>
+          <Link
+            onClick={(e) =>
+              !user || !password || !email ? e.preventDefault() : null
+            }
+            to={`/dashboard?username=${user}&password=${password}`}
+            className={classes.linkStyle}
+          >
+            <Button
+              variant="contained"
+              size="large"
+              className={classes.textBox}
+            >
+              Register as a customer
+            </Button>
+          </Link>
+        </div>
+        <Checkbox
+          defaultChecked
+          color="default"
+          inputProps={{ "aria-label": "checkbox with default color" }}
+          name="managerType"
+          style={{ marginLeft: "0%" }}
+        />
+        <label for="managerType"> Register as a store owner</label>
+        <br />
       </form>
-      <div className={classes.inputStyle}>
-        <Link
-          onClick={(e) =>
-            !user || !password || !email ? e.preventDefault() : null
-          }
-          to={`/dashboard?username=${user}&password=${password}`}
-          className={classes.linkStyle}
-        >
-          <Button variant="contained" size="large" className={classes.textBox}>
-            Register
-          </Button>
-        </Link>
-      </div>
     </Paper>
   );
 }
