@@ -7,7 +7,7 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
 
-function DealTile({ deal, description, qrCode, expiryDate }) {
+function DealTile({ deal, description, qrCode, expiryDate, pictureLink }) {
   const [flipped, setFlipped] = useState(false);
   const classes = useStyles();
 
@@ -23,7 +23,7 @@ function DealTile({ deal, description, qrCode, expiryDate }) {
             component="img"
             alt="Contemplative Reptile"
             height="140"
-            image="/static/images/cards/contemplative-reptile.jpg"
+            image={pictureLink}
             title="Contemplative Reptile"
           />
           <CardContent>
@@ -46,7 +46,7 @@ function DealTile({ deal, description, qrCode, expiryDate }) {
             component="img"
             alt="Contemplative Reptile"
             height="140"
-            image="/static/images/cards/contemplative-reptile.jpg"
+            image="https://miro.medium.com/max/1424/1*sHmqYIYMV_C3TUhucHrT4w.png"
             title="Contemplative Reptile"
           />
           <CardContent>

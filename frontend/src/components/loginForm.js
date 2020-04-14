@@ -11,9 +11,36 @@ function LoginForm() {
   const [user, setUser] = useState(""); // user name hook
   const [password, setPassword] = useState(""); // password hook
   const [auth, setAuth] = useState(false); // password hook
+  const [userType, setUsertype] = useState(0); // password hook
   const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
-  const loginHandler = () => {
+  const userTypeHandler = () => {
+    fetch(proxyurl + "https://elsabor.herokuapp.com/users/getUserType", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `email=${user}`,
+    })
+      .then((response) => {
+        console.log(`Status code ${response.status}`);
+        response.text().then((result) => {
+          console.log(result);
+          if (result == 1) {
+            console.log("user is a manager");
+            setUsertype(1);
+          } else {
+            console.log("user is a regular user ");
+            setUsertype(0);
+          }
+        });
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
+  };
+
+  const loginHandler = (e) => {
     fetch(proxyurl + "https://elsabor.herokuapp.com/users/login", {
       method: "POST",
       headers: {
@@ -35,6 +62,12 @@ function LoginForm() {
       .catch((error) => {
         console.error("Error: ", error);
       });
+
+    userTypeHandler(); // determine user type
+
+    if (!auth) {
+      e.preventDefault();
+    }
   };
 
   return (
@@ -93,15 +126,18 @@ function LoginForm() {
 
         <div className={classes.inputStyle}>
           <Link
-            to={`/dashboard?username=${user}`}
-            onClick={(e) => (!auth ? e.preventDefault() : null)}
+            to={
+              userType === 0
+                ? `/dashboard?username=${user}`
+                : `/managerDashboard?username=${user}`
+            }
+            onClick={(e) => loginHandler(e)}
             className={classes.linkStyle}
           >
             <Button
               variant="contained"
               size="large"
               className={classes.textBox}
-              onClick={loginHandler}
             >
               Login
             </Button>

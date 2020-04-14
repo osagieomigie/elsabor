@@ -5,6 +5,7 @@ import RegistrationForm from "./components/registrationForm.js";
 import Background from "./components/background-red-slash.js";
 import UserDashboard from "./components/userDashboard.js";
 import Profile from "./components/profile.js";
+import ManagerDashboard from "./components/managerDashboard";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
           render={(props) => <Background comp={<RegistrationForm />} />}
         />
         <Route path="/dashboard" component={UserDashboard} />
+        <Route path="/managerDashboard" component={ManagerDashboard} />
         <Route path="/profile" component={Profile} />
       </div>
     </Router>

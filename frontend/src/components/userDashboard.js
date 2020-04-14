@@ -119,6 +119,9 @@ function UserDashboard() {
                     description={description}
                     qrCode={qrCode}
                     expiryDate={expiryDate}
+                    pictureLink={
+                      "https://cdn.pixabay.com/photo/2018/10/05/23/24/chicken-3727097__340.jpg"
+                    }
                     key={index}
                   />
                 )
@@ -147,6 +150,9 @@ function UserDashboard() {
                       description={description}
                       qrCode={qrCode}
                       expiryDate={expiryDate}
+                      pictureLink={
+                        "https://cdn.pixabay.com/photo/2018/10/05/23/24/chicken-3727097__340.jpg"
+                      }
                       key={index}
                     />
                   )
