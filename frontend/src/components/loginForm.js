@@ -11,28 +11,26 @@ function LoginForm() {
   const [user, setUser] = useState(""); // user name hook
   const [password, setPassword] = useState(""); // password hook
   const [auth, setAuth] = useState(false); // password hook
+  const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
   const loginHandler = () => {
-    const data = { email: "test@123.com", password: "test" };
-    fetch("https://elsabor.herokuapp.com/users/login", {
+    fetch(proxyurl + "https://elsabor.herokuapp.com/users/login", {
       method: "POST",
-      mode: "cors",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
       },
-
-      body: JSON.stringify(data),
+      body: `email=${user}&password=${password}`,
     })
       .then((response) => {
-        //response.json();
-        console.log(response);
         console.log(`Status code ${response.status}`);
         if (response.status === 200) {
           setAuth(true);
+        } else {
+          alert("Username or password incorrect");
         }
-      })
-      .then((data) => {
-        console.log(data);
+        response.text().then((result) => {
+          console.log(result);
+        });
       })
       .catch((error) => {
         console.error("Error: ", error);

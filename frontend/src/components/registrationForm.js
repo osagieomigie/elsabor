@@ -12,6 +12,43 @@ function RegistrationForm() {
   const [user, setUser] = useState(""); // user name hook
   const [email, setEmail] = useState(""); // user name hook
   const [password, setPassword] = useState(""); // password hook
+  const [userType, setUserType] = useState(1);
+  const proxyurl = "https://cors-anywhere.herokuapp.com/";
+
+  const registrationHandler = () => {
+    const data = {
+      email: email,
+      username: user,
+      password: password,
+      type: userType,
+    };
+
+    console.log(`user type: ${userType}`);
+    fetch(proxyurl + "https://elsabor.herokuapp.com/users/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        console.log(`Status code ${response.status}`);
+        response.text().then((result) => {
+          console.log(result);
+        });
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
+  };
+
+  const handleCheck = () => {
+    if (userType === 1) {
+      setUserType(0);
+    } else {
+      setUserType(1);
+    }
+  };
 
   return (
     <Paper className={classes.root}>
@@ -100,13 +137,18 @@ function RegistrationForm() {
             onClick={(e) =>
               !user || !password || !email ? e.preventDefault() : null
             }
-            to={`/dashboard?username=${user}&password=${password}`}
+            to={
+              userType === 0
+                ? `/dashboard?username=${user}&password=${password}`
+                : `/dashboard?manager`
+            }
             className={classes.linkStyle}
           >
             <Button
               variant="contained"
               size="large"
               className={classes.textBox}
+              onClick={registrationHandler}
             >
               Register as a customer
             </Button>
@@ -118,6 +160,8 @@ function RegistrationForm() {
           inputProps={{ "aria-label": "checkbox with default color" }}
           name="managerType"
           style={{ marginLeft: "0%" }}
+          checked={userType}
+          onChange={handleCheck}
         />
         <label for="managerType"> Register as a store owner</label>
         <br />
