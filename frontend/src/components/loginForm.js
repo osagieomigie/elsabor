@@ -26,6 +26,7 @@ function LoginForm() {
         console.log(`Status code ${response.status}`);
         response.text().then((result) => {
           console.log(result);
+          // eslint-disable-next-line
           if (result == 1) {
             console.log("user is a manager");
             setUsertype(1);
