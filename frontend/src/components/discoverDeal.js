@@ -4,7 +4,7 @@ import { useStyles } from "./Styles";
 
 // since there is only one of these components, these are the unique styling for this component
   const stylePaperDiscover = {
-    margin: "30%",
+    marginTop: "24%",
     marginLeft: "7%",
     width: "65%",
     height: "auto",
@@ -33,10 +33,6 @@ function DiscoverDeal() {
     const changeCity = (event) => {
         setCity(event.target.value);
     };
-    const [location, setLocation] = React.useState("");
-    const changeLocation = (event) => {
-        setLocation(event.target.value);
-    }
 
     return (
         <Paper className={classes.root} style={stylePaperDiscover}>
