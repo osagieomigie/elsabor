@@ -1,14 +1,6 @@
 import React from 'react';
 import Box from '@material-ui/core/Box';
 
-const styleLogo = {
-    position: "absolute",
-    left: "10%",
-    width: "22%",
-    height: "15%",
-    top: "5%"
-};
-
 const styleCopy = {
     position: "absolute",
     left: "10%",
@@ -26,7 +18,7 @@ const styleDiscoverTitle = {
 function LandingWriting() {
   return (
     <div>
-      <img src={require("./Assets/Elsabor_logo.png")} alt={"logo"} style={styleLogo} />
+      {/*<img src={require("./Assets/Elsabor_logo.png")} alt={"logo"} style={styleLogo} />*/}
       <div style={styleCopy}>
             <Box textAlign="left" fontWeight="fontWeightBold" color="secondary.main" fontSize={35}>
                 Find the best
