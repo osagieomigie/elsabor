@@ -13,19 +13,41 @@ const useStyles = makeStyles((theme) => ({
   title: {
     paddingRight: "2.5%",
     color: "white",
+    [theme.breakpoints.down("sm")]: {
+      color: "black",
+      paddingRight: "1.9%",
+    },
+    [theme.breakpoints.between("sm", "md")]: {
+      color: "black",
+      paddingRight: "2%",
+    },
   },
   logo: {
     paddingRight: "65%",
-    // eslint-disable-next-line
-    ["@media (max-width: 320px)"]: {
-      paddingRight: "0%",
+    [theme.breakpoints.down("sm")]: {
+      paddingRight: "10%",
+    },
+    [theme.breakpoints.between("sm", "md")]: {
+      paddingRight: "36%",
+      paddingLeft: "5%",
     },
   },
-  eSabor: {
-    paddingRight: "2%",
+  smSize: {
+    [theme.breakpoints.down("sm")]: {
+      width: "135px",
+    },
+    [theme.breakpoints.between("sm", "md")]: {
+      width: "250px",
+    },
   },
   textColor: {
     color: "white",
+    [theme.breakpoints.down("sm")]: {
+      color: "black",
+    },
+    [theme.breakpoints.between("sm", "md")]: {
+      color: "black",
+    },
   },
 }));
 
@@ -40,7 +62,11 @@ function LoginAppBar() {
       >
         <Toolbar>
           <div className={classes.logo}>
-            <img src={require("./Assets/Elsabor_logo.png")} alt={"logo"} />
+            <img
+              src={require("./Assets/Elsabor_logo.png")}
+              alt={"logo"}
+              className={classes.smSize}
+            />
           </div>
           <Link
             to={`/register`}

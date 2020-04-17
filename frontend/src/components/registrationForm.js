@@ -132,6 +132,16 @@ function RegistrationForm() {
           />
         </div>
 
+        <Checkbox
+          inputProps={{ "aria-label": "checkbox with default color" }}
+          name="managerType"
+          style={{ marginLeft: "0%" }}
+          checked={userType}
+          onChange={handleCheck}
+        />
+        <label for="managerType"> Register as a store owner</label>
+        <br />
+
         <div className={classes.inputStyle}>
           <Link
             onClick={(e) =>
@@ -154,17 +164,6 @@ function RegistrationForm() {
             </Button>
           </Link>
         </div>
-        <Checkbox
-          defaultChecked
-          color="default"
-          inputProps={{ "aria-label": "checkbox with default color" }}
-          name="managerType"
-          style={{ marginLeft: "0%" }}
-          checked={userType}
-          onChange={handleCheck}
-        />
-        <label for="managerType"> Register as a store owner</label>
-        <br />
       </form>
     </Paper>
   );
