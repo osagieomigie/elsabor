@@ -75,7 +75,7 @@ function LoginAppBar() {
           >
             <Typography variant="h7">Join now</Typography>
           </Link>
-          <Link to={`/dashboard`} style={{ textDecoration: "none" }}>
+          <Link to={`/login`} style={{ textDecoration: "none" }}>
             <Button variant="outlined" className={classes.textColor}>
               Sign in
             </Button>

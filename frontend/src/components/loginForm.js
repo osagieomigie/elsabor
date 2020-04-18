@@ -10,10 +10,12 @@ function LoginForm() {
   const classes = useStyles();
   const [user, setUser] = useState(""); // user name hook
   const [password, setPassword] = useState(""); // password hook
-  const [auth, setAuth] = useState(false); // password hook
-  const [userType, setUsertype] = useState(0); // password hook
+  const [auth, setAuth] = useState(false);
+  const [userType, setUsertype] = useState(0);
+  const [userId, setUserId] = useState(0);
   const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
+  // determine user type
   const userTypeHandler = () => {
     fetch(proxyurl + "https://elsabor.herokuapp.com/users/getUserType", {
       method: "POST",
@@ -58,6 +60,7 @@ function LoginForm() {
         }
         response.text().then((result) => {
           console.log(result);
+          setUserId(parseInt(result));
         });
       })
       .catch((error) => {
@@ -129,8 +132,8 @@ function LoginForm() {
           <Link
             to={
               userType === 0
-                ? `/dashboard?username=${user}`
-                : `/managerDashboard?username=${user}`
+                ? `/dashboard?userId=${userId}`
+                : `/managerDashboard?userId=${userId}`
             }
             onClick={(e) => loginHandler(e)}
             className={classes.linkStyle}

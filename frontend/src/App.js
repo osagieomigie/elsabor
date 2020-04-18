@@ -6,9 +6,9 @@ import Background from "./components/background-red-slash.js";
 import UserDashboard from "./components/userDashboard.js";
 import Profile from "./components/profile.js";
 import ManagerDashboard from "./components/managerDashboard";
-import CouponForm from "./components/couponForm.js"
-import LandingWriting from './components/landingWriting.js'
-import DiscoverDeal from "./components/discoverDeal.js"
+import CouponForm from "./components/couponForm.js";
+import LandingWriting from "./components/landingWriting.js";
+import DiscoverDeal from "./components/discoverDeal.js";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
 function App() {
@@ -16,9 +16,9 @@ function App() {
     <Router>
       <div className="App">
         <Route
-        path="/"
-        exact
-        render={(props) => <Background comp={<DiscoverDeal />} />}
+          path="/"
+          exact
+          render={(props) => <Background comp={<DiscoverDeal />} />}
         />
         <Route
           path="/login"

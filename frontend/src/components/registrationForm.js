@@ -13,6 +13,7 @@ function RegistrationForm() {
   const [email, setEmail] = useState(""); // user name hook
   const [password, setPassword] = useState(""); // password hook
   const [userType, setUserType] = useState(1);
+  const [userId, setUserId] = useState(0);
   const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
   const registrationHandler = () => {
@@ -35,6 +36,7 @@ function RegistrationForm() {
         console.log(`Status code ${response.status}`);
         response.text().then((result) => {
           console.log(result);
+          setUserId(parseInt(result));
         });
       })
       .catch((error) => {
@@ -149,8 +151,8 @@ function RegistrationForm() {
             }
             to={
               userType === 0
-                ? `/dashboard?username=${user}&password=${password}`
-                : `/dashboard?manager`
+                ? `/dashboard?userId=${userId}`
+                : `/managerDashboard?userId=${userId}`
             }
             className={classes.linkStyle}
           >

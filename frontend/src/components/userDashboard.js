@@ -5,6 +5,7 @@ import DealTile from "./dealTile.js";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import PersistentDrawerLeft from "./searchHeader.js";
+import queryString from "query-string";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -93,6 +94,8 @@ let discoverDeals = [
 
 function UserDashboard() {
   const classes = useStyles();
+  const { userId } = queryString.parse(window.location.search); // extract userId
+  console.log(`userID ${userId}`);
   return (
     <div className={classes.root}>
       <PersistentDrawerLeft />

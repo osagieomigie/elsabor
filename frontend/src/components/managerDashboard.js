@@ -8,6 +8,7 @@ import PersistentDrawerLeft from "./searchHeader.js";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import { Link } from "react-router-dom";
+import queryString from "query-string";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -58,6 +59,8 @@ let savedDeals = [
 
 function ManagerDashboard() {
   const classes = useStyles();
+  const { userId } = queryString.parse(window.location.search); // extract userId
+  console.log(`userID ${userId}`);
   return (
     <div className={classes.root}>
       <PersistentDrawerLeft />
