@@ -18,7 +18,7 @@ function App() {
         <Route
         path="/"
         exact
-        render={(props) => <Background comp={<div><LandingWriting /><DiscoverDeal /></div>} />}
+        render={(props) => <Background comp={<DiscoverDeal />} />}
         />
         <Route
           path="/login"
