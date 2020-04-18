@@ -1,13 +1,18 @@
 import React from "react";
-import { Paper, Button, NativeSelect } from "@material-ui/core";
+import { Paper, Button, NativeSelect, Box } from "@material-ui/core";
 import { useStyles } from "./Styles";
 
 // since there is only one of these components, these are the unique styling for this component
+
+  const styleCopy = {
+    position: "absolute",
+    left: "10%",
+    top: "25%",
+};
+
   const stylePaperDiscover = {
-    marginTop: "24%",
-    marginLeft: "7%",
-    width: "65%",
-    height: "auto",
+    position: "relative",
+    width: "55vw",
   };
 
   const styleCitySelector = {
@@ -25,6 +30,9 @@ import { useStyles } from "./Styles";
   const optionColour = {
       color: "black",
   };
+  const styleTitle = {
+    paddingBottom: "6%",
+  };
 
 function DiscoverDeal() {
 
@@ -35,30 +43,46 @@ function DiscoverDeal() {
     };
 
     return (
-        <Paper className={classes.root} style={stylePaperDiscover}>
-            <NativeSelect
-                value={city}
-                onChange={changeCity}
-                inputProps={{
-                    name: "city",
-                    id: "city-native-simple",
-                    style:
-                    {
-                        color: "white",
-                        borderBottom: "solid white",
-                    }
-                }}
-                style={styleCitySelector}
-            >
-                {/* hardcoded available cities */}
-                <option value="" disabled>Select your city</option>
-                <option value="Calgary" style={optionColour}>Calgary</option>
-            </NativeSelect>
-            <Button variant="contained" size="medium" style={styleDealsButton}>
-                Find Deals
-            </Button>
-
-        </Paper>
+        <div className={classes.discover}>
+            <div style={styleCopy}>
+                <Box textAlign="left" fontWeight="fontWeightBold" color="secondary.main" fontSize={35}>
+                    Find the best
+                </Box>
+                <Box textAlign="left" color="text.primary" fontSize={35}>
+                    deals for the restaurants
+                </Box>
+                <Box textAlign="left" color="secondary.main" fontSize={35}  style={styleTitle}>
+                    you love.
+                </Box>
+                <Box textAlign="left" color="text.secondary" fontSize={35}>
+                    Discover local deals
+                </Box>
+                <Paper className={classes.root} style={stylePaperDiscover}>
+                <NativeSelect
+                    value={city}
+                    onChange={changeCity}
+                    inputProps={{
+                        name: "city",
+                        id: "city-native-simple",
+                        style:
+                        {
+                            color: "white",
+                            borderBottom: "solid white",
+                        }
+                    }}
+                    style={styleCitySelector}
+                >
+                    {/* hardcoded available cities */}
+                    <option value="" disabled>Choose city</option>
+                    <option value="Calgary" style={optionColour}>Calgary</option>
+                </NativeSelect>
+                <Button variant="contained" size="medium" style={styleDealsButton}>
+                    Find Deals
+                </Button>
+            </Paper>
+            </div>
+            
+        </div>
     );
 }
 
