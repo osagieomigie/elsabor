@@ -89,6 +89,7 @@ function InputAdornments() {
     password: "",
     firstname: "",
     lastname: "",
+    userType: 0,
     imagepath: "",
     showPassword: false
   });
@@ -96,6 +97,35 @@ function InputAdornments() {
   useEffect(() => {
     getUserProfile();
   }, [userid]);
+
+  const sendData = async function(e) {
+    console.log(`user type: ${values.userType}`);
+    fetch(proxyurl + "https://elsabor.herokuapp.com/users/updateUser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userid: values.userid,
+        email: values.email,
+        username: values.username,
+        password: values.password,
+        type: values.userType,
+        link: values.imagepath,
+        firstname : values.firstname,
+        lastname: values.lastname
+      }),
+    })
+      .then((response) => {
+        console.log(`Status code ${response.status}`);
+        response.text().then((result) => {
+          console.log(result);
+        });
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
+  }
 
   // the function to get user profile
   const getUserProfile = async function(e) {
@@ -117,6 +147,7 @@ function InputAdornments() {
             password: result.password,
             firstname: result.firstname,
             lastname: result.lastname,
+            userType: result.type,
             imagepath: result.link,
             showPassword: false
           });
@@ -353,6 +384,7 @@ function InputAdornments() {
             size="small"
             className={classes.saveButton}
             startIcon={<SaveIcon/>}
+            onClick={sendData}
           >
             Save
           </Button>
