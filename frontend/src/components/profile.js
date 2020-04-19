@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import clsx from "clsx";
 import { makeStyles } from "@material-ui/core/styles";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
@@ -16,6 +16,7 @@ import SearchHeader from "./searchHeader";
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import { Grid } from "@material-ui/core";
 import { storage } from "../firebase/firebase.js";
+import queryString from "query-string";
 
 const useStyles = makeStyles((theme) => ({
   // General CSS settings
@@ -70,40 +71,19 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function InputAdornments() {
+// const { userid } = queryString.parse(window.location.search); // extract userId
+// TODO: change the userid here
+let userid = 1;
+
+
+function InputAdornments() {
   const classes = useStyles();
   // Proxy needed for accessing Heroku
   const proxyurl = "https://elsabor-cors.herokuapp.com/";
 
-  // TODO: change the userid here
-  let uid = 1;
-  fetch(proxyurl + "https://elsabor.herokuapp.com/users/getUserProfile", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: `userid=${uid}`
-  })
-    .then((response) => {
-      console.log(`Status code ${response.status}`);
-      response.json().then((result) => {
-        setValues({
-          username: result.username,
-          email: result.email,
-          password: result.password,
-          firstname: result.firstname,
-          lastname: result.lastname,
-          imagepath: result.link,
-          showPassword: false
-        });
-      });
-    })
-    .catch((error) => {
-      console.error("Error: ", error);
-    });
-
   // All values needed for the user
   const [values, setValues] = React.useState({
+    userid: "",
     username: "",
     email: "",
     password: "",
@@ -112,6 +92,64 @@ export default function InputAdornments() {
     imagepath: "",
     showPassword: false
   });
+
+  useEffect(() => {
+    getUserProfile();
+  }, [userid]);
+
+  // the function to get user profile
+  const getUserProfile = async function(e) {
+
+    await fetch(proxyurl + "https://elsabor.herokuapp.com/users/getUserProfile", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: `userid=${userid}`
+    })
+      .then((response) => {
+        console.log(`Status code ${response.status}`);
+        response.json().then((result) => {
+          setValues({
+            userid: userid,
+            username: result.username,
+            email: result.email,
+            password: result.password,
+            firstname: result.firstname,
+            lastname: result.lastname,
+            imagepath: result.link,
+            showPassword: false
+          });
+          return result.link;
+        }).then(function(url) {
+          getImage(url);
+        });
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
+
+  };
+
+  const updateUserAvatar = url => {
+    //proxyurl + "https://elsabor.herokuapp.com/users/updateUserAvatar"
+    fetch(proxyurl + "https://elsabor.herokuapp.com/users/updateUserAvatar", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: `userid=${userid}&link=${url}`
+    })
+      .then((response) => {
+        console.log(`Status code ${response.status}`);
+        response.text().then((result) => {
+          console.log(result);
+        });
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
+  };
 
   // Handling changes to the user values above as the user changes the text forms
   const handleChange = (prop) => (event) => {
@@ -145,11 +183,11 @@ export default function InputAdornments() {
   const handleFireBaseUpload = (e) => {
     //e.preventDefault();
     console.log("start of upload");
-    if (values.username === "") {
-      values.username = "EmptyUsername";
+    if (values.userid === "") {
+      values.userid = "USER-ID-NOT-VALID";
     }
     const uploadTask = storage
-      .ref(`/images/${values.username}`)
+      .ref(`/images/${values.userid}`)
       .put(uploadedImage.current.file);
     //initiates the firebase side uploading
     uploadTask.on(
@@ -161,26 +199,28 @@ export default function InputAdornments() {
       (err) => {
         //catches the errors
         console.log(err);
+      }, function() {
+        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+          console.log("File available at", downloadURL);
+          values.imagepath = downloadURL;
+          updateUserAvatar(downloadURL);
+        });
       }
     );
-    storage.ref().child(`/images/${values.username}.png`).getDownloadURL().then((url) => {
-      values.imagepath = url;
-    });
   };
 
   // Function for handling getting the image based on if the user has made a profile picture yet
-  async function getImage() {
-    let retVal = "";
-    if (values.imagepath !== "") {
-      storage.ref().child(`/images/${values.username}.png`).getDownloadURL().then((url) => {
-        document.getElementById("test").src = url;
-      });
+  async function getImage(url) {
+    // let retVal = "";
+    if (url !== "") {
+      url = url.replace("images/","images%2F");
+      document.getElementById("avatar").src = url;
     } else {
       storage.ref().child(`/images/default-profile.png`).getDownloadURL().then((url) => {
-        document.getElementById("test").src = url;
+        document.getElementById("avatar").src = url;
       });
     }
-    return retVal;
+    // return retVal;
   }
 
   // Reference for changing the image when uploading a new image
@@ -195,9 +235,9 @@ export default function InputAdornments() {
           <Typography variant="h2" className={classes.title}>Account Details</Typography>
           <Avatar className={classes.image}>
             <img
-              id="test"
-              src={getImage()}
-              alt="Profile"
+              id="avatar"
+              src=""
+              alt=""
               ref={uploadedImage}
               style={{
                 width: "100%",
@@ -321,3 +361,5 @@ export default function InputAdornments() {
     </div>
   );
 }
+
+export default InputAdornments;
