@@ -10,6 +10,7 @@ import CouponForm from "./components/couponForm.js";
 import LandingWriting from "./components/landingWriting.js";
 import DiscoverDeal from "./components/discoverDeal.js";
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import LogoutPage from "./components/logoutPage";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
         <Route path="/managerDashboard" component={ManagerDashboard} />
         <Route path="/addCoupon" component={CouponForm} />
         <Route path="/profile" component={Profile} />
+        <Route path="/logout" component={LogoutPage} />
       </div>
     </Router>
   );
