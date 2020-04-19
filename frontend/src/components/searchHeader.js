@@ -15,6 +15,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import InputBase from '@material-ui/core/InputBase';
 import SearchIcon from '@material-ui/icons/Search';
+import { Link } from "react-router-dom";
 
 // https://material-ui.com/components/drawers/ for more info, potentially when we use the drawer to navigate through pages
 // MIGHT NEED TO MAKE FUNCTIION TO MAKE PAGE CONTENT RESPONSIVE TO THE MENU DRAWER
@@ -105,10 +106,13 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
     justifyContent: 'flex-end',
   },
+  iconButton: {
+
+  },
   // POTENTIAL STYLING FOR CONTENT SHIFTING
 }));
 
-export default function PersistentDrawerLeft() {
+export default function PersistentDrawerLeft(props) {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -120,6 +124,13 @@ export default function PersistentDrawerLeft() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const [searchValue, setSearchValue] = React.useState()
+
+  // this is the function to search for deals
+  const handleSearch = (event) => { 
+    console.log(searchValue);
+  }
 
   return (
     <div className={classes.root}>
@@ -143,17 +154,18 @@ export default function PersistentDrawerLeft() {
           </IconButton>
           <img src={require("./Assets/Elsabor_logo.png")} alt={"logo"} />
           <div className={classes.search}>
-            <div className={classes.searchIcon}>
-              <SearchIcon />
-            </div>
             <InputBase
-              placeholder="Search For Restaurants"
+              placeholder="Search For Deals"
               classes={{
                 root: classes.inputRoot,
                 input: classes.inputInput,
               }}
               inputProps={{ 'aria-label': 'search' }}
+              onChange={event=>{setSearchValue(event.target.value)}}
             />
+            <IconButton className={classes.iconButton} aria-label="search" onClick={handleSearch}>
+              <SearchIcon />
+            </IconButton>
           </div>
         </Toolbar>
       </AppBar>
@@ -173,8 +185,8 @@ export default function PersistentDrawerLeft() {
         </div>
         <Divider />
         <List>
-          {["Dashboard", "Profile", "Logout"].map((text, index) => (
-            <ListItem button key={text}>
+          {["dashboard", "profile", "logout"].map((text, index) => (
+            <ListItem button key={text} component={Link} to={"/" + text}>
               <ListItemText primary={text} />
             </ListItem>
           ))}
