@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactCardFlip from "react-card-flip";
 import { useStyles } from "./Styles";
 import Card from "@material-ui/core/Card";
@@ -6,14 +6,53 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
+import queryString from "query-string";
 
-function DealTile({ dealId, deal, description, expiryDate, pictureLink }) {
+function DealTile({
+  user,
+  dealId,
+  deal,
+  description,
+  expiryDate,
+  pictureLink,
+}) {
   const [flipped, setFlipped] = useState(false);
+  const [newSaved, setNewSaved] = useState(false);
   const classes = useStyles();
+  const proxyurl = "https://cors-anywhere.herokuapp.com/";
+  const p2 = "https://elsabor-cors.herokuapp.com/";
+  const { userId } = queryString.parse(window.location.search); // extract userId
+  let data = { userid: userId, dealid: dealId };
+
+  // determine add deal to user account
+  const addDeal = () => {
+    console.log(`userID: ${userId} dealID: ${dealId}`);
+    fetch(p2 + "https://elsabor.herokuapp.com/users/addSavedDeal", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        console.log(`Status code ${response.status}`);
+        response.text().then((result) => {
+          console.log(result);
+          setNewSaved(true);
+        });
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
+  };
 
   const handleFlipping = () => {
     setFlipped(!flipped);
   };
+
+  useEffect(() => {
+    //setNewSaved(false); // reset
+  }, [newSaved]); //re-render when user adds deal
 
   return (
     <ReactCardFlip isFlipped={flipped} flipDirection="vertical">
@@ -60,12 +99,7 @@ function DealTile({ dealId, deal, description, expiryDate, pictureLink }) {
             <Typography variant="body2" color="textSecondary" component="p">
               {dealId}
             </Typography>
-            <button
-              className={classes.dealTileButton}
-              onClick={() => {
-                alert("deals should be saved to users account ");
-              }}
-            >
+            <button className={classes.dealTileButton} onClick={addDeal}>
               Get Deal
             </button>
           </CardContent>

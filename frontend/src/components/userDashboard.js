@@ -80,7 +80,7 @@ function UserDashboard() {
   // get saved deals
   const getSavedDeals = () => {
     console.log(`extracted userID ${userId}`);
-    fetch(proxyurl + "https://elsabor.herokuapp.com/users/getSavedDeals", {
+    fetch(p2 + "https://elsabor.herokuapp.com/users/getSavedDeals", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
