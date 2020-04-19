@@ -213,13 +213,18 @@ export default function PersistentDrawerLeft(props) {
                 setSearchValue(event.target.value);
               }}
             />
-            <IconButton
-              className={classes.iconButton}
-              aria-label="search"
-              onClick={handleSearch}
+            <Link
+              to={`/search?userId=${userId}&word=${searchValue}`}
+              className={classes.linkStyle}
             >
-              <SearchIcon />
-            </IconButton>
+              <IconButton
+                className={classes.iconButton}
+                aria-label="search"
+                onClick={handleSearch}
+              >
+                <SearchIcon />
+              </IconButton>
+            </Link>
           </div>
         </Toolbar>
       </AppBar>
