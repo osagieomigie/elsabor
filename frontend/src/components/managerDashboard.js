@@ -99,13 +99,12 @@ function ManagerDashboard() {
         </Carousel>
       </div>
 
-      <Link to={`/dashboard?username=user`} className={classes.linkStyle}>
+      <Link to={`/addCoupon`} className={classes.linkStyle}>
         <Card className={classes.card}>
           <img
             component="img"
-            alt="QR code"
             height="250"
-            src="https://lh3.googleusercontent.com/proxy/1ValKE0yk_bbWG7FuON3UV0iKSx3wbz8qvsIcyQCBb6YSh39MYANriYhyVWhFL_98nmjolCqwHaL4cB0W6XB0pgWZskGbBA"
+            src={require("./Assets/plus-icon.png")}
             title="QR code"
           />
           <CardContent>
