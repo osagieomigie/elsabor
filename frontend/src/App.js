@@ -7,10 +7,10 @@ import UserDashboard from "./components/userDashboard.js";
 import Profile from "./components/profile.js";
 import ManagerDashboard from "./components/managerDashboard";
 import CouponForm from "./components/couponForm.js";
-import LandingWriting from "./components/landingWriting.js";
 import DiscoverDeal from "./components/discoverDeal.js";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import LogoutPage from "./components/logoutPage";
+import SearchPage from "./components/searchPage";
 
 function App() {
   return (
@@ -35,6 +35,7 @@ function App() {
         <Route path="/addCoupon" component={CouponForm} />
         <Route path="/profile" component={Profile} />
         <Route path="/logout" component={LogoutPage} />
+        <Route path="/search" component={SearchPage} />
       </div>
     </Router>
   );
