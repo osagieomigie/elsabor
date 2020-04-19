@@ -7,7 +7,7 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
 
-function DealTile({ deal, description, qrCode, expiryDate, pictureLink }) {
+function DealTile({ dealId, deal, description, expiryDate, pictureLink }) {
   const [flipped, setFlipped] = useState(false);
   const classes = useStyles();
 
@@ -58,7 +58,7 @@ function DealTile({ deal, description, qrCode, expiryDate, pictureLink }) {
               {""}
             </Typography>
             <Typography variant="body2" color="textSecondary" component="p">
-              {qrCode}
+              {dealId}
             </Typography>
             <button
               className={classes.dealTileButton}

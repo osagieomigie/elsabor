@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useStyles } from "./Styles";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
@@ -12,24 +12,27 @@ function LoginForm() {
   const [password, setPassword] = useState(""); // password hook
   const [auth, setAuth] = useState(false);
   const [userType, setUsertype] = useState(0);
-  const [userId, setUserId] = useState(0);
+  let temp = 0;
+  const [userId, setId] = useState(0);
   const proxyurl = "https://cors-anywhere.herokuapp.com/";
+  const p2 = "https://elsabor-cors.herokuapp.com/";
 
   // determine user type
   const userTypeHandler = () => {
-    fetch(proxyurl + "https://elsabor.herokuapp.com/users/getUserType", {
+    fetch(p2 + "https://elsabor.herokuapp.com/users/getUserType", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: `email=${user}`,
+      body: `userid=${temp}`,
     })
       .then((response) => {
         console.log(`Status code ${response.status}`);
         response.text().then((result) => {
           console.log(result);
+
           // eslint-disable-next-line
-          if (result == 1) {
+          if (parseInt(result) === 1) {
             console.log("user is a manager");
             setUsertype(1);
           } else {
@@ -44,7 +47,7 @@ function LoginForm() {
   };
 
   const loginHandler = (e) => {
-    fetch(proxyurl + "https://elsabor.herokuapp.com/users/login", {
+    fetch(p2 + "https://elsabor.herokuapp.com/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -59,15 +62,17 @@ function LoginForm() {
           alert("Username or password incorrect");
         }
         response.text().then((result) => {
-          console.log(result);
-          setUserId(parseInt(result));
+          console.log(`result: ${result}`);
+          //userId = result;
+          temp = parseInt(result);
+          setId(temp);
+          console.log(`userID set: ${temp}`);
+          userTypeHandler(); // determine user type
         });
       })
       .catch((error) => {
         console.error("Error: ", error);
       });
-
-    userTypeHandler(); // determine user type
 
     if (!auth) {
       e.preventDefault();

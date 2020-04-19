@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useStyles } from "./Styles";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
@@ -13,7 +13,9 @@ function RegistrationForm() {
   const [email, setEmail] = useState(""); // user name hook
   const [password, setPassword] = useState(""); // password hook
   const [userType, setUserType] = useState(1);
-  const [userId, setUserId] = useState(0);
+  const [loading, setLoad] = useState(true);
+  let temp = 0;
+  const [userId, setId] = useState(0);
   const proxyurl = "https://cors-anywhere.herokuapp.com/";
 
   const registrationHandler = () => {
@@ -36,7 +38,10 @@ function RegistrationForm() {
         console.log(`Status code ${response.status}`);
         response.text().then((result) => {
           console.log(result);
-          setUserId(parseInt(result));
+          temp = parseInt(result);
+          setId(temp);
+          console.log(`userID set: ${temp}`);
+          setLoad(false);
         });
       })
       .catch((error) => {
@@ -51,6 +56,8 @@ function RegistrationForm() {
       setUserType(1);
     }
   };
+
+  useEffect(() => {}, [loading]);
 
   return (
     <Paper className={classes.root}>
@@ -145,26 +152,30 @@ function RegistrationForm() {
         <br />
 
         <div className={classes.inputStyle}>
-          <Link
-            onClick={(e) =>
-              !user || !password || !email ? e.preventDefault() : null
-            }
-            to={
-              userType === 0
-                ? `/dashboard?userId=${userId}`
-                : `/managerDashboard?userId=${userId}`
-            }
-            className={classes.linkStyle}
-          >
+          {loading === true ? (
             <Button
               variant="contained"
               size="large"
               className={classes.textBox}
               onClick={registrationHandler}
             >
-              Register as a customer
+              Register
             </Button>
-          </Link>
+          ) : (
+            <Button
+              variant="contained"
+              size="large"
+              className={classes.textBox}
+              to={
+                userType === 0
+                  ? `/dashboard?userId=${userId}`
+                  : `/managerDashboard?userId=${userId}`
+              }
+              component={Link}
+            >
+              Register
+            </Button>
+          )}
         </div>
       </form>
     </Paper>
