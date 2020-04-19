@@ -13,9 +13,9 @@ import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import SaveIcon from "@material-ui/icons/Save";
 import SearchHeader from "./searchHeader";
-import PhotoCamera from "@material-ui/icons/PhotoCamera";
-import { Grid } from "@material-ui/core";
-import queryString from "query-string";
+import PhotoCamera from '@material-ui/icons/PhotoCamera';
+import { Grid } from '@material-ui/core';
+import { storage } from "../firebase/firebase.js";
 
 const useStyles = makeStyles((theme) => ({
   // General CSS settings
@@ -70,18 +70,34 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const { userId } = queryString.parse(window.location.search); // extract userId
-
 export default function InputAdornments() {
   const classes = useStyles();
+  // Proxy needed for accessing Heroku
+  const proxyurl = "https://cors-anywhere.herokuapp.com/";
+  fetch(proxyurl + "https://elsabor.herokuapp.com/users/getUserProfile", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        console.log(`Status code ${response.status}`);
+        response.text().then((result) => {
+          console.log(result);
+        });
+      })
+      .catch((error) => {
+        console.error("Error: ", error);
+      });
+
   // All values needed for the user
   const [values, setValues] = React.useState({
-    username: "",
-    email: "",
-    password: "",
-    firstname: "",
-    lastname: "",
-    imagepath: "default-profile.png",
+    username: '',
+    email: '',
+    password: '',
+    firstname: '',
+    lastname: '',
+    imagepath: '',
     showPassword: false,
   });
 
@@ -98,23 +114,65 @@ export default function InputAdornments() {
     event.preventDefault();
   };
 
-  const handleImageUpload = (e) => {
+  // Handling the image upload when a user wants to upload a new profile pic
+  const handleImageUpload = e => {
     const [file] = e.target.files;
     if (file) {
       const reader = new FileReader();
-      const { current } = uploadedImage;
-      console.log(uploadedImage.current);
+      const {current} = uploadedImage;
       current.file = file;
       reader.onload = (e) => {
         current.src = e.target.result;
       };
       reader.readAsDataURL(file);
+      console.log(values.imagepath)
+      handleFireBaseUpload();
     }
   };
 
-  // Declaring the image path based on the users image path/image name
-  const IMG = require(`./Assets/${values.imagepath}`);
+  const handleFireBaseUpload = (e) => {
+    //e.preventDefault();
+    console.log("start of upload");
+    if(values.username === '') {
+      values.username = "EmptyUsername";
+    }
+    const uploadTask = storage
+      .ref(`/images/${values.username}`)
+      .put(uploadedImage.current.file);
+    //initiates the firebase side uploading
+    uploadTask.on(
+      "state_changed",
+      (snapShot) => {
+        //takes a snap shot of the process as it is happening
+        console.log(snapShot);
+      },
+      (err) => {
+        //catches the errors
+        console.log(err);
+      },
+    );
+    storage.ref().child(`/images/${values.username}.png`).getDownloadURL().then((url) => {
+      values.imagepath = url;
+    });
+  };
 
+  // Function for handling getting the image based on if the user has made a profile picture yet
+  async function getImage () {
+    let retVal = "";
+    if(values.imagepath !== '') {
+      storage.ref().child(`/images/${values.username}.png`).getDownloadURL().then((url) => {
+        document.getElementById("test").src = url;
+      });
+    }
+    else {
+      storage.ref().child(`/images/default-profile.png`).getDownloadURL().then((url) => {
+        document.getElementById("test").src = url;
+      });
+    }
+    return retVal
+  }
+
+  // Reference for changing the image when uploading a new image
   const uploadedImage = React.useRef(null);
 
   return (
@@ -123,39 +181,27 @@ export default function InputAdornments() {
 
       <Grid container spacing={1}>
         <Grid item className={classes.leftSide} xs={6}>
-          <Typography variant="h2" className={classes.title}>
-            Account Details
-          </Typography>
-          <Avatar className={classes.image}>
-            <img
-              src={IMG}
-              ref={uploadedImage}
-              style={{
-                width: "100%",
-                height: "100%",
-                position: "absolute",
-              }}
-            />
-          </Avatar>
-          <input
-            accept="image/x-png,image/jpeg"
-            className={classes.input}
-            onChange={handleImageUpload}
-            id="icon-button-file"
-            type="file"
-          />
-          <label htmlFor="icon-button-file">
-            <IconButton
-              color="primary"
-              aria-label="upload picture"
-              component="span"
-            >
-              <PhotoCamera />
-            </IconButton>
-          </label>
-          <Typography variant="h3" className={classes.profileName}>
-            {values.firstname + " " + values.lastname}
-          </Typography>
+            <Typography variant="h2" className={classes.title}>Account Details</Typography>
+            <Avatar className={classes.image}> 
+              <img 
+                id = "test"
+                src={getImage()}
+                alt="Profile"
+                ref={uploadedImage}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  position: "absolute"
+                }}
+              /> 
+            </Avatar>
+            <input accept="image/x-png,image/jpeg" className={classes.input} onChange={handleImageUpload} id="icon-button-file" type="file" />
+            <label htmlFor="icon-button-file">
+              <IconButton color="primary" aria-label="upload picture" component="span">
+                <PhotoCamera />
+              </IconButton>
+            </label>
+            <Typography variant="h3" className={classes.profileName}>{values.firstname + " " + values.lastname}</Typography>
         </Grid>
         <Grid item className={classes.rightSide} xs={6}>
           <FormControl
@@ -248,15 +294,15 @@ export default function InputAdornments() {
             />
           </FormControl>
 
-          <Button
-            variant="contained"
-            color="primary"
-            size="small"
-            className={classes.saveButton}
-            startIcon={<SaveIcon />}
-          >
-            Save
-          </Button>
+            <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                className={classes.saveButton}
+                startIcon={<SaveIcon />}
+            >
+                Save
+            </Button>
         </Grid>
       </Grid>
     </div>
