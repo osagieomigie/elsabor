@@ -1,6 +1,7 @@
 import React from "react";
 import { Paper, Button, NativeSelect, Box } from "@material-ui/core";
 import { useStyles } from "./Styles";
+import { Link } from "react-router-dom";
 
 // since there is only one of these components, these are the unique styling for this component
 
@@ -42,6 +43,10 @@ function DiscoverDeal() {
         setCity(event.target.value);
     };
 
+    const goToLogin = (event) => {
+        
+    };
+
     return (
         <div className={classes.discover}>
             <div style={styleCopy}>
@@ -76,12 +81,13 @@ function DiscoverDeal() {
                     <option value="" disabled>Choose city</option>
                     <option value="Calgary" style={optionColour}>Calgary</option>
                 </NativeSelect>
-                <Button variant="contained" size="medium" style={styleDealsButton}>
-                    Find Deals
-                </Button>
+                <Link to={"/login"}>
+                    <Button variant="contained" size="medium" style={styleDealsButton} onClick={goToLogin}>
+                        Find Deals
+                    </Button>
+                </Link>
             </Paper>
-            </div>
-            
+            </div>   
         </div>
     );
 }
