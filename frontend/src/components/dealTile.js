@@ -7,6 +7,8 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
 import queryString from "query-string";
+import Zmage from 'react-zmage'
+
 
 function DealTile({
   user,
@@ -47,6 +49,10 @@ function DealTile({
   };
 
   const handleFlipping = () => {
+    let apiendpoints = "https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=";
+    if (flipped){
+      Zmage.browsing({ src:`${apiendpoints}https://elsabor.herokuapp.com/users/deals/${data.dealid}` });
+    }
     setFlipped(!flipped);
   };
 
