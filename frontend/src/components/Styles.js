@@ -55,7 +55,7 @@ export const useStyles = makeStyles((theme) => ({
     minWidth: 290,
     minHeight: 300,
     maxWidth: 345,
-    margin: ".5%",
+    margin: "0%",
     marginBottom: "10%",
   },
   inputStyle: {

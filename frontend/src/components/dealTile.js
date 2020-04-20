@@ -7,8 +7,7 @@ import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
 import Typography from "@material-ui/core/Typography";
 import queryString from "query-string";
-import Zmage from 'react-zmage'
-
+import Zmage from "react-zmage";
 
 function DealTile({
   user,
@@ -49,9 +48,12 @@ function DealTile({
   };
 
   const handleFlipping = () => {
-    let apiendpoints = "https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=";
-    if (flipped){
-      Zmage.browsing({ src:`${apiendpoints}https://elsabor.herokuapp.com/users/deals/${data.dealid}` });
+    let apiendpoints =
+      "https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=";
+    if (flipped) {
+      Zmage.browsing({
+        src: `${apiendpoints}https://elsabor.herokuapp.com/users/deals/${data.dealid}`,
+      });
     }
     setFlipped(!flipped);
   };
@@ -66,10 +68,10 @@ function DealTile({
         <CardActionArea>
           <CardMedia
             component="img"
-            alt="Contemplative Reptile"
-            height="140"
+            alt="Deal"
+            height="156"
             image={pictureLink}
-            title="Contemplative Reptile"
+            title="Deal"
           />
           <CardContent>
             <Typography gutterBottom variant="h5" component="h2">

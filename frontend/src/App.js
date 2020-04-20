@@ -22,12 +22,10 @@ const cloudMqttUrl = "mqtts://tailor.cloudmqtt.com";
 const options = {
   port: 38184,
   username: "kvuwrinm",
-  password: "TJaId_fJy2me"
+  password: "tucVHt31q7Gx",
 };
 
-
 function App() {
-
   const notification = (ntitle, message, type) => {
     store.addNotification({
       title: ntitle,
@@ -40,8 +38,8 @@ function App() {
       dismiss: {
         duration: 6000,
         timingFunction: "ease-out",
-        onScreen: true
-      }
+        onScreen: true,
+      },
     });
   };
 
@@ -49,19 +47,31 @@ function App() {
     let cflag = false;
 
     let client = mqtt.connect(cloudMqttUrl, options);
-    client.on("connect", function() {
-      client.subscribe("notification", function(err) {
+    client.on("connect", function () {
+      client.subscribe("notification", function (err) {
         if (!err) {
-          notification("System Notification:", "Connect to MQTT Server Successfully!", "success");
+          notification(
+            "System Notification:",
+            "Connect to MQTT Server Successfully!",
+            "success"
+          );
         } else {
-          notification("System Notification:", "Connect to MQTT Server Failed!", "danger");
+          notification(
+            "System Notification:",
+            "Connect to MQTT Server Failed!",
+            "danger"
+          );
         }
       });
     });
 
-    client.on("reconnect", function() {
+    client.on("reconnect", function () {
       if (cflag === false) {
-        notification("System Notification:", "Network Disconnected! MQTT Will Try Reconnecting!", "danger");
+        notification(
+          "System Notification:",
+          "Network Disconnected! MQTT Will Try Reconnecting!",
+          "danger"
+        );
         cflag = true;
       }
     });
@@ -75,30 +85,29 @@ function App() {
     //   console.error("MQTT Error");
     // });
 
-    client.on("message", function(topic, message) {
+    client.on("message", function (topic, message) {
       // message is Buffer
       notification("System Notification:", message.toString(), "success");
-
     });
   }, []);
 
   return (
     <Router>
       <div className="App">
-        <ReactNotification/>
+        <ReactNotification />
         <Route
           path="/"
           exact
-          render={(props) => <Background comp={<DiscoverDeal/>}/>}
+          render={(props) => <Background comp={<DiscoverDeal />} />}
         />
         <Route
           path="/login"
           exact
-          render={(props) => <Background comp={<LoginForm/>}/>}
+          render={(props) => <Background comp={<LoginForm />} />}
         />
         <Route
           path="/register"
-          render={(props) => <Background comp={<RegistrationForm/>}/>}
+          render={(props) => <Background comp={<RegistrationForm />} />}
         />
         <Route path="/dashboard" component={UserDashboard} />
         <Route path="/managerDashboard" component={ManagerDashboard} />
@@ -109,7 +118,6 @@ function App() {
         <Route path="/menu" component={Menu} />
       </div>
     </Router>
-
   );
 }
 

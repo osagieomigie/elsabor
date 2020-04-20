@@ -44,6 +44,8 @@ function LoginForm() {
               setUsertype(0);
               history.push(`/dashboard?userId=${temp}`);
             }
+          } else {
+            alert("Please try again");
           }
         });
       })
