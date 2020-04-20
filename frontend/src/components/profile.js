@@ -73,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
 
 // const { userid } = queryString.parse(window.location.search); // extract userId
 // TODO: change the userid here
-let userid = 6;
+let userid = 1;
 
 
 function InputAdornments() {
