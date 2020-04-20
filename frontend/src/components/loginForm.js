@@ -33,15 +33,17 @@ function LoginForm() {
         response.text().then((result) => {
           console.log(result);
 
-          // eslint-disable-next-line
-          if (parseInt(result) === 1) {
-            console.log("user is a manager");
-            setUsertype(1);
-            history.push(`/managerDashboard?userId=${temp}`);
-          } else {
-            console.log("user is a regular user ");
-            setUsertype(0);
-            history.push(`/dashboard?userId=${temp}`);
+          if (response.status == 200) {
+            // eslint-disable-next-line
+            if (parseInt(result) === 1 && auth === true) {
+              console.log("user is a manager");
+              setUsertype(1);
+              history.push(`/managerDashboard?userId=${temp}`);
+            } else {
+              console.log("user is a regular user ");
+              setUsertype(0);
+              history.push(`/dashboard?userId=${temp}`);
+            }
           }
         });
       })
@@ -63,6 +65,7 @@ function LoginForm() {
         if (response.status === 200) {
           setAuth(true);
         } else {
+          setAuth(false);
           alert("Username or password incorrect");
         }
         response.text().then((result) => {
