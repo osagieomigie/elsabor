@@ -27,61 +27,58 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: "wrap",
     overflow: "hidden",
     backgroundColor: "rgb(243, 244, 246)",
-    height: "100%"
+    height: "100%",
   },
   // Style code for the left side of the grid (Title, Avatar, Name)
   leftSide: {
-    marginTop: "0vh"
+    marginTop: "0vh",
   },
   // Style code just for the title of the page
   title: {
     textAlign: "left",
     paddingBottom: "10vh",
-    marginLeft: "10vw"
+    marginLeft: "10vw",
   },
   // Style code just for the Avatar profile pic
   image: {
     width: "15vw",
     height: "15vw",
-    marginLeft: "10vw"
+    marginLeft: "10vw",
   },
   // Style code for the user's name beneath the avatar pic
   profileName: {
     marginTop: "3vh",
     textAlign: "left",
-    marginLeft: "10vw"
+    marginLeft: "10vw",
   },
   // Style code for the right side of the grid (all the Text Forms and Save button)
   rightSide: {
     textAlign: "left",
-    marginTop: "15vh"
+    marginTop: "15vh",
   },
   // Style code for all the textfields/text forms
   textField: {
     width: "30vw",
     backgroundColor: "white",
-    marginBottom: "3vh"
+    marginBottom: "3vh",
   },
   // Style code for just the Save Button below all the Text Forms
   saveButton: {
     height: "5vh",
     width: "30vw",
-    backgroundColor: "red"
+    backgroundColor: "red",
   },
   input: {
-    display: "none"
-  }
+    display: "none",
+  },
 }));
-
-// const { userid } = queryString.parse(window.location.search); // extract userId
-// TODO: change the userid here
-let userid = 1;
-
 
 function InputAdornments() {
   const classes = useStyles();
   // Proxy needed for accessing Heroku
   const proxyurl = "https://elsabor-cors.herokuapp.com/";
+  const { userId } = queryString.parse(window.location.search); // extract userId
+  let userid = userId;
 
   // All values needed for the user
   const [values, setValues] = React.useState({
@@ -93,14 +90,14 @@ function InputAdornments() {
     lastname: "",
     userType: 0,
     imagepath: "",
-    showPassword: false
+    showPassword: false,
   });
 
   useEffect(() => {
     getUserProfile();
   }, [userid]);
 
-  const sendData = async function(e) {
+  const sendData = async function (e) {
     console.log(`user type: ${values.userType}`);
     fetch(proxyurl + "https://elsabor.herokuapp.com/users/updateUser", {
       method: "POST",
@@ -114,8 +111,8 @@ function InputAdornments() {
         password: values.password,
         type: values.userType,
         link: values.imagepath,
-        firstname : values.firstname,
-        lastname: values.lastname
+        firstname: values.firstname,
+        lastname: values.lastname,
       }),
     })
       .then((response) => {
@@ -127,51 +124,55 @@ function InputAdornments() {
       .catch((error) => {
         console.error("Error: ", error);
       });
-  }
+  };
 
   // the function to get user profile
-  const getUserProfile = async function(e) {
-
-    await fetch(proxyurl + "https://elsabor.herokuapp.com/users/getUserProfile", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: `userid=${userid}`
-    })
+  const getUserProfile = async function (e) {
+    await fetch(
+      proxyurl + "https://elsabor.herokuapp.com/users/getUserProfile",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `userid=${userid}`,
+      }
+    )
       .then((response) => {
         console.log(`Status code ${response.status}`);
-        response.json().then((result) => {
-          setValues({
-            userid: userid,
-            username: result.username,
-            email: result.email,
-            password: result.password,
-            firstname: result.firstname,
-            lastname: result.lastname,
-            userType: result.type,
-            imagepath: result.link,
-            showPassword: false
+        response
+          .json()
+          .then((result) => {
+            setValues({
+              userid: userid,
+              username: result.username,
+              email: result.email,
+              password: result.password,
+              firstname: result.firstname,
+              lastname: result.lastname,
+              userType: result.type,
+              imagepath: result.link,
+              showPassword: false,
+            });
+            return result.link;
+          })
+          .then(function (url) {
+            getImage(url);
           });
-          return result.link;
-        }).then(function(url) {
-          getImage(url);
-        });
       })
       .catch((error) => {
         console.error("Error: ", error);
       });
-
   };
 
-  const updateUserAvatar = url => {
+  const updateUserAvatar = (url) => {
     //proxyurl + "https://elsabor.herokuapp.com/users/updateUserAvatar"
     fetch(proxyurl + "https://elsabor.herokuapp.com/users/updateUserAvatar", {
       method: "POST",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
+        "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: `userid=${userid}&link=${url}`
+      body: `userid=${userid}&link=${url}`,
     })
       .then((response) => {
         console.log(`Status code ${response.status}`);
@@ -198,7 +199,7 @@ function InputAdornments() {
   };
 
   // Handling the image upload when a user wants to upload a new profile pic
-  const handleImageUpload = e => {
+  const handleImageUpload = (e) => {
     const [file] = e.target.files;
     if (file) {
       const reader = new FileReader();
@@ -232,8 +233,9 @@ function InputAdornments() {
       (err) => {
         //catches the errors
         console.log(err);
-      }, function() {
-        uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+      },
+      function () {
+        uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
           console.log("File available at", downloadURL);
           values.imagepath = downloadURL;
           updateUserAvatar(downloadURL);
@@ -246,12 +248,16 @@ function InputAdornments() {
   async function getImage(url) {
     // let retVal = "";
     if (url !== "" && url !== null) {
-      url = url.replace("images/","images%2F");
+      url = url.replace("images/", "images%2F");
       document.getElementById("avatar").src = url;
     } else {
-      storage.ref().child(`/images/default-profile.png`).getDownloadURL().then((url) => {
-        document.getElementById("avatar").src = url;
-      });
+      storage
+        .ref()
+        .child(`/images/default-profile.png`)
+        .getDownloadURL()
+        .then((url) => {
+          document.getElementById("avatar").src = url;
+        });
     }
     // return retVal;
   }
@@ -261,11 +267,13 @@ function InputAdornments() {
 
   return (
     <div className={classes.root}>
-      <SearchHeader/>
+      <SearchHeader />
 
       <Grid container spacing={1}>
         <Grid item className={classes.leftSide} xs={6}>
-          <Typography variant="h2" className={classes.title}>Account Details</Typography>
+          <Typography variant="h2" className={classes.title}>
+            Account Details
+          </Typography>
           <Avatar className={classes.image}>
             <img
               id="avatar"
@@ -275,19 +283,29 @@ function InputAdornments() {
               style={{
                 width: "100%",
                 height: "100%",
-                position: "absolute"
+                position: "absolute",
               }}
             />
           </Avatar>
-          <input accept="image/x-png,image/jpeg" className={classes.input} onChange={handleImageUpload}
-                 id="icon-button-file" type="file"/>
+          <input
+            accept="image/x-png,image/jpeg"
+            className={classes.input}
+            onChange={handleImageUpload}
+            id="icon-button-file"
+            type="file"
+          />
           <label htmlFor="icon-button-file">
-            <IconButton color="primary" aria-label="upload picture" component="span">
-              <PhotoCamera/>
+            <IconButton
+              color="primary"
+              aria-label="upload picture"
+              component="span"
+            >
+              <PhotoCamera />
             </IconButton>
           </label>
-          <Typography variant="h3"
-                      className={classes.profileName}>{values.firstname + " " + values.lastname}</Typography>
+          <Typography variant="h3" className={classes.profileName}>
+            {values.firstname + " " + values.lastname}
+          </Typography>
         </Grid>
         <Grid item className={classes.rightSide} xs={6}>
           <FormControl
@@ -340,7 +358,7 @@ function InputAdornments() {
                     onMouseDown={handleMouseDownPassword}
                     edge="end"
                   >
-                    {values.showPassword ? <Visibility/> : <VisibilityOff/>}
+                    {values.showPassword ? <Visibility /> : <VisibilityOff />}
                   </IconButton>
                 </InputAdornment>
               }
@@ -385,7 +403,7 @@ function InputAdornments() {
             color="primary"
             size="small"
             className={classes.saveButton}
-            startIcon={<SaveIcon/>}
+            startIcon={<SaveIcon />}
             onClick={sendData}
           >
             Save

@@ -5,6 +5,7 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 function LoginForm() {
   const classes = useStyles();
@@ -16,6 +17,7 @@ function LoginForm() {
   const [userId, setId] = useState(0);
   const proxyurl = "https://cors-anywhere.herokuapp.com/";
   const p2 = "https://elsabor-cors.herokuapp.com/";
+  const history = useHistory();
 
   // determine user type
   const userTypeHandler = () => {
@@ -35,9 +37,11 @@ function LoginForm() {
           if (parseInt(result) === 1) {
             console.log("user is a manager");
             setUsertype(1);
+            history.push(`/managerDashboard?userId=${temp}`);
           } else {
             console.log("user is a regular user ");
             setUsertype(0);
+            history.push(`/dashboard?userId=${temp}`);
           }
         });
       })

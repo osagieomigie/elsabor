@@ -73,9 +73,14 @@ function UserDashboard() {
   const classes = useStyles();
   const [savedDeals, setSavedDeals] = useState([]);
   const [discoverDeals, setDiscoverDeals] = useState([]);
+  const [changes, setChanges] = useState(false);
   const proxyurl = "https://cors-anywhere.herokuapp.com/";
   const p2 = "https://elsabor-cors.herokuapp.com/";
   const { userId } = queryString.parse(window.location.search); // extract userId
+
+  const handleChange = (value) => {
+    setChanges(value);
+  };
 
   // get saved deals
   const getSavedDeals = () => {
@@ -118,6 +123,12 @@ function UserDashboard() {
     getDeals(); // get deals
     // eslint-disable-next-line
   }, [userId]);
+
+  useEffect(() => {
+    getSavedDeals();
+    handleChange(false);
+    // eslint-disable-next-line
+  }, [changes]);
 
   return (
     <div className={classes.root}>
@@ -188,6 +199,7 @@ function UserDashboard() {
               qrCode={dealid}
               expiryDate={expiry}
               pictureLink={link}
+              handleChange={handleChange}
               key={index}
             />
           ))}

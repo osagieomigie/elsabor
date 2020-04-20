@@ -6,6 +6,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
 import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 function RegistrationForm() {
   const classes = useStyles();
@@ -17,6 +18,7 @@ function RegistrationForm() {
   let temp = 0;
   const [userId, setId] = useState(0);
   const proxyurl = "https://cors-anywhere.herokuapp.com/";
+  const history = useHistory();
 
   const registrationHandler = () => {
     const data = {
@@ -42,6 +44,12 @@ function RegistrationForm() {
           setId(temp);
           console.log(`userID set: ${temp}`);
           setLoad(false);
+
+          if (userType === 1) {
+            history.push(`/managerDashboard?userId=${temp}`);
+          } else {
+            history.push(`/dashboard?userId=${temp}`);
+          }
         });
       })
       .catch((error) => {
