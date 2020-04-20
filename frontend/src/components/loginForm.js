@@ -35,7 +35,7 @@ function LoginForm() {
 
           if (response.status == 200) {
             // eslint-disable-next-line
-            if (parseInt(result) === 1 && auth === true) {
+            if (parseInt(result) === 1) {
               console.log("user is a manager");
               setUsertype(1);
               history.push(`/managerDashboard?userId=${temp}`);
