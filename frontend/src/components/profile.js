@@ -17,6 +17,8 @@ import PhotoCamera from "@material-ui/icons/PhotoCamera";
 import { Grid } from "@material-ui/core";
 import { storage } from "../firebase/firebase.js";
 import queryString from "query-string";
+import Zmage from 'react-zmage'
+
 
 const useStyles = makeStyles((theme) => ({
   // General CSS settings

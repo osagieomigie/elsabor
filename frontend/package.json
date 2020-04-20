@@ -25,7 +25,8 @@
     "react-multi-carousel": "^2.5.5",
     "react-notifications-component": "^2.4.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.4.0"
+    "react-scripts": "3.4.0",
+    "react-zmage": "^0.8.5-beta.31"
   },
   "scripts": {
     "start": "react-scripts start",
