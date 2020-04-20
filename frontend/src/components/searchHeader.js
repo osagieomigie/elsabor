@@ -259,16 +259,18 @@ export default function PersistentDrawerLeft(props) {
                   <ListItemText primary={text} />
                 </ListItem>
               ))
-            : ["managerDashboard", "profile", "logout"].map((text, index) => (
-                <ListItem
-                  button
-                  key={text}
-                  component={Link}
-                  to={`/${text}?userId=${userId}`}
-                >
-                  <ListItemText primary={text} />
-                </ListItem>
-              ))}
+            : ["managerDashboard", "profile", "menu", "logout"].map(
+                (text, index) => (
+                  <ListItem
+                    button
+                    key={text}
+                    component={Link}
+                    to={`/${text}?userId=${userId}`}
+                  >
+                    <ListItemText primary={text} />
+                  </ListItem>
+                )
+              )}
         </List>
         <Divider />
       </Drawer>

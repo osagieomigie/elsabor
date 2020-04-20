@@ -21,6 +21,7 @@
     "react": "^16.13.0",
     "react-card-flip": "^1.0.10",
     "react-dom": "^16.13.0",
+    "react-image-lightbox": "^5.1.1",
     "react-material-ui-carousel": "^1.1.1",
     "react-multi-carousel": "^2.5.5",
     "react-notifications-component": "^2.4.0",
