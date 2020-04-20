@@ -11,11 +11,15 @@ import DiscoverDeal from "./components/discoverDeal.js";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import LogoutPage from "./components/logoutPage";
 import SearchPage from "./components/searchPage";
+import ReactNotification from 'react-notifications-component'
+import 'react-notifications-component/dist/theme.css'
+
 
 function App() {
   return (
     <Router>
       <div className="App">
+        <ReactNotification />
         <Route
           path="/"
           exact
