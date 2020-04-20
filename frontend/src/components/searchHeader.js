@@ -249,7 +249,7 @@ export default function PersistentDrawerLeft(props) {
         <Divider />
         <List>
           {userType === 0
-            ? ["dashboard", "profile", "logout"].map((text, index) => (
+            ? ["dashboard", "profile", "menu", "logout"].map((text, index) => (
                 <ListItem
                   button
                   key={text}
