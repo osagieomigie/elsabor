@@ -9,8 +9,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import { Link } from "react-router-dom";
 import queryString from "query-string";
-import { store } from 'react-notifications-component';
-import {animated} from 'animate.css';
+
 
 
 
@@ -113,21 +112,6 @@ function ManagerDashboard() {
 
   useEffect(() => {
     getStoreDeals();
-    // store.addNotification({
-    //   title: "System Notifications:",
-    //   message: "Welcome Back!",
-    //   type: "success",
-    //   insert: "top",
-    //   container: "top-right",
-    //   animationIn: ["animated", "fadeIn"],
-    //   animationOut: ["animated", "fadeOut"],
-    //   dismiss: {
-    //     duration: 8000,
-    //     timingFunction: 'ease-out',
-    //     onScreen: true
-    //   }
-    // });
-
     // eslint-disable-next-line
   }, [userId]);
 
