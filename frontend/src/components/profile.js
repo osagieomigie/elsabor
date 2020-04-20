@@ -71,14 +71,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-<<<<<<< HEAD
-=======
-// const { userid } = queryString.parse(window.location.search); // extract userId
-// TODO: change the userid here
-let userid = 1;
-
-
->>>>>>> e70df696f92f6d4dc7580e196c79b4eae72d55c6
 function InputAdornments() {
   const classes = useStyles();
   // Proxy needed for accessing Heroku
