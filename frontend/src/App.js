@@ -14,6 +14,7 @@ import SearchPage from "./components/searchPage";
 import ReactNotification from "react-notifications-component";
 import "react-notifications-component/dist/theme.css";
 import mqtt from "mqtt";
+import Menu from "./components/menu.js";
 import { store } from "react-notifications-component";
 import { animated } from "animate.css";
 
@@ -99,12 +100,13 @@ function App() {
           path="/register"
           render={(props) => <Background comp={<RegistrationForm/>}/>}
         />
-        <Route path="/dashboard" component={UserDashboard}/>
-        <Route path="/managerDashboard" component={ManagerDashboard}/>
-        <Route path="/addCoupon" component={CouponForm}/>
-        <Route path="/profile" component={Profile}/>
-        <Route path="/logout" component={LogoutPage}/>
-        <Route path="/search" component={SearchPage}/>
+        <Route path="/dashboard" component={UserDashboard} />
+        <Route path="/managerDashboard" component={ManagerDashboard} />
+        <Route path="/addCoupon" component={CouponForm} />
+        <Route path="/profile" component={Profile} />
+        <Route path="/logout" component={LogoutPage} />
+        <Route path="/search" component={SearchPage} />
+        <Route path="/menu" component={Menu} />
       </div>
     </Router>
 

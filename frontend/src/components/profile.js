@@ -73,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
 
 // const { userid } = queryString.parse(window.location.search); // extract userId
 // TODO: change the userid here
-let userid = 1;
+let userid = 6;
 
 
 function InputAdornments() {
@@ -243,7 +243,7 @@ function InputAdornments() {
   // Function for handling getting the image based on if the user has made a profile picture yet
   async function getImage(url) {
     // let retVal = "";
-    if (url !== "") {
+    if (url !== "" && url !== null) {
       url = url.replace("images/","images%2F");
       document.getElementById("avatar").src = url;
     } else {
