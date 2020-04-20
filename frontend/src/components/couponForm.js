@@ -17,37 +17,34 @@ import {
 import "date-fns";
 import queryString from "query-string";
 
-const useStyles = makeStyles((theme) => ({
-  divRoot: {
-    margin: theme.spacing(1),
-    width: "50ch",
-    position: "absolute",
-    left: "40%",
-    top: "40%",
-    transform: "translate(-40%, -40%)",
-  },
-  title: {
-    position: "relative",
-    left: "25%",
-  },
-  inputField: {
-    width: "75ch",
-  },
-  fieldDivider: {
-    paddingTop: "20px",
-  },
-  fieldDivider: {
-    paddingTop: "20px",
-  },
-  bottomDivider: {
-    justifyContent: "left",
-  },
-  submitButton: {
-    width: "75ch",
-  },
-  buttonDivider: {
-    paddingTop: "40px",
-  },
+const useStyles = makeStyles ((theme) => ({
+    divRoot: {
+        width: '50vh',
+        position: 'absolute', left: '45%', top: '45%',
+        transform: 'translate(-45%, -45%)',
+        marginTop: '60px',
+    },
+    title: {
+        position: 'relative', left: '18%',
+    },
+    inputField: {
+        width: '60vh',
+    },
+    fieldDivider: {
+        paddingTop: '20px',
+    },
+    fieldDivider: {
+        paddingTop: '20px',
+    },
+    bottomDivider: {
+        justifyContent: 'left',
+    },
+    submitButton: {
+        width: '60vh',
+    },
+    buttonDivider: {
+        paddingTop: '40px',
+    },
 }));
 
 export default function CouponForm() {
