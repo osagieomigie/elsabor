@@ -15,9 +15,9 @@ function DealTile({
   description,
   expiryDate,
   pictureLink,
+  handleChange,
 }) {
   const [flipped, setFlipped] = useState(false);
-  const [newSaved, setNewSaved] = useState(false);
   const classes = useStyles();
   const proxyurl = "https://cors-anywhere.herokuapp.com/";
   const p2 = "https://elsabor-cors.herokuapp.com/";
@@ -27,6 +27,7 @@ function DealTile({
   // determine add deal to user account
   const addDeal = () => {
     console.log(`userID: ${userId} dealID: ${dealId}`);
+    handleChange(true);
     fetch(p2 + "https://elsabor.herokuapp.com/users/addSavedDeal", {
       method: "POST",
       headers: {
@@ -38,7 +39,6 @@ function DealTile({
         console.log(`Status code ${response.status}`);
         response.text().then((result) => {
           console.log(result);
-          setNewSaved(true);
         });
       })
       .catch((error) => {
@@ -50,9 +50,9 @@ function DealTile({
     setFlipped(!flipped);
   };
 
-  useEffect(() => {
-    //setNewSaved(false); // reset
-  }, [newSaved]); //re-render when user adds deal
+  // useEffect(() => {
+  //   setNewSaved(false); // reset
+  // }, [newSaved]); //re-render when user adds deal
 
   return (
     <ReactCardFlip isFlipped={flipped} flipDirection="vertical">
