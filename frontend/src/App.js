@@ -18,6 +18,7 @@ import Menu from "./components/menu.js";
 import { store } from "react-notifications-component";
 import { ApolloProvider } from "@apollo/react-hooks";
 import client from "./client";
+import UserProvider from "./userProvider";
 
 const cloudMqttUrl = "mqtts://tailor.cloudmqtt.com";
 const options = {
@@ -84,34 +85,36 @@ function App() {
   }, []);
 
   return (
-    <ApolloProvider client={client}>
-      <Router>
-        <div className="App">
-          <ReactNotification />
-          <Route
-            path="/"
-            exact
-            render={(props) => <Background comp={<DiscoverDeal />} />}
-          />
-          <Route
-            path="/login"
-            exact
-            render={(props) => <Background comp={<LoginForm />} />}
-          />
-          <Route
-            path="/register"
-            render={(props) => <Background comp={<RegistrationForm />} />}
-          />
-          <Route path="/dashboard" component={UserDashboard} />
-          <Route path="/managerDashboard" component={ManagerDashboard} />
-          <Route path="/addCoupon" component={CouponForm} />
-          <Route path="/profile" component={Profile} />
-          <Route path="/logout" component={LogoutPage} />
-          <Route path="/search" component={SearchPage} />
-          <Route path="/menu" component={Menu} />
-        </div>
-      </Router>
-    </ApolloProvider>
+    <UserProvider>
+      <ApolloProvider client={client}>
+        <Router>
+          <div className="App">
+            <ReactNotification />
+            <Route
+              path="/"
+              exact
+              render={(props) => <Background comp={<DiscoverDeal />} />}
+            />
+            <Route
+              path="/login"
+              exact
+              render={(props) => <Background comp={<LoginForm />} />}
+            />
+            <Route
+              path="/register"
+              render={(props) => <Background comp={<RegistrationForm />} />}
+            />
+            <Route path="/dashboard" component={UserDashboard} />
+            <Route path="/managerDashboard" component={ManagerDashboard} />
+            <Route path="/addCoupon" component={CouponForm} />
+            <Route path="/profile" component={Profile} />
+            <Route path="/logout" component={LogoutPage} />
+            <Route path="/search" component={SearchPage} />
+            <Route path="/menu" component={Menu} />
+          </div>
+        </Router>
+      </ApolloProvider>
+    </UserProvider>
   );
 }
 
