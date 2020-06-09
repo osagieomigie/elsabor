@@ -19,13 +19,11 @@ function UserProvider() {
   useEffect(() => {
     const unsubsribe = authState();
     return () => {
-      unsubsribe();
+      authState();
     };
   });
 
-  return (
-    <UserContext.Provider value={user}>{props.children}</UserContext.Provider>
-  );
+  return <UserContext.Provider value={user}></UserContext.Provider>;
 }
 
 export default UserProvider;

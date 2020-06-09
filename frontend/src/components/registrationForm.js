@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useStyles } from "./Styles";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Checkbox from "@material-ui/core/Checkbox";
-import { Link } from "react-router-dom";
 import { useHistory } from "react-router-dom";
+import gql from "graphql-tag";
+import { useMutation } from "@apollo/react-hooks";
+import { auth } from "./../firebase/firebase";
 
 function RegistrationForm() {
   const classes = useStyles();
@@ -14,46 +16,55 @@ function RegistrationForm() {
   const [email, setEmail] = useState(""); // user name hook
   const [password, setPassword] = useState(""); // password hook
   const [userType, setUserType] = useState(1);
-  const [loading, setLoad] = useState(true);
-  let temp = 0;
-  const [userId, setId] = useState(0);
-  const proxyurl = "https://cors-anywhere.herokuapp.com/";
   const history = useHistory();
 
+  const REGISTER_MUTATION = gql`
+    mutation RegisterUser($input: AddUserInput!) {
+      addUser(input: $input) {
+        id
+        userId
+        email
+        username
+        type
+        link
+      }
+    }
+  `;
+
+  const [registerMutation, registerResponse] = useMutation(REGISTER_MUTATION);
+
+  if (registerResponse.error) {
+    console.log(`Error: ${registerResponse.error}`); // handle error
+  }
+
+  if (registerResponse.data && registerResponse.data.addUser.userId) {
+    console.log(`DB user ID: ${registerResponse.data.addUser.userId}`);
+
+    // redirect user to appropriate page
+    if (userType === 1) {
+      history.push(
+        `/managerDashboard?userId=${registerResponse.data.addUser.userId}`
+      );
+    } else {
+      history.push(`/dashboard?userId=${registerResponse.data.addUser.userId}`);
+    }
+  }
+
   const registrationHandler = () => {
-    const data = {
-      email: email,
-      username: user,
-      password: password,
-      type: userType,
-    };
-
-    console.log(`user type: ${userType}`);
-    fetch(proxyurl + "https://elsabor.herokuapp.com/users/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => {
-        console.log(`Status code ${response.status}`);
-        response.text().then((result) => {
-          console.log(result);
-          temp = parseInt(result);
-          setId(temp);
-          console.log(`userID set: ${temp}`);
-          setLoad(false);
-
-          if (userType === 1) {
-            history.push(`/managerDashboard?userId=${temp}`);
-          } else {
-            history.push(`/dashboard?userId=${temp}`);
-          }
+    auth
+      .createUserWithEmailAndPassword(email, password) // create user with firebase authentication
+      .then((data) => {
+        // add user to firestore
+        console.log("Adding user to firestore");
+        registerMutation({
+          variables: {
+            input: { username: user, email: email, type: userType },
+          },
         });
       })
-      .catch((error) => {
-        console.error("Error: ", error);
+      .catch((e) => {
+        console.log(`Error: ${e}`);
+        alert(`Error: ${e}`);
       });
   };
 
@@ -65,20 +76,12 @@ function RegistrationForm() {
     }
   };
 
-  useEffect(() => {}, [loading]);
-
   return (
     <Paper className={classes.root}>
       <Typography variant="h4" component="h1">
         El Sabor
       </Typography>
-      <form
-        className={classes.form}
-        noValidate
-        autoComplete="off"
-        action="https://elsabor.herokuapp.com/users/register"
-        method="post"
-      >
+      <form className={classes.form} noValidate autoComplete="off">
         <div className={classes.inputStyle}>
           <TextField
             required
@@ -160,30 +163,14 @@ function RegistrationForm() {
         <br />
 
         <div className={classes.inputStyle}>
-          {loading === true ? (
-            <Button
-              variant="contained"
-              size="large"
-              className={classes.textBox}
-              onClick={registrationHandler}
-            >
-              Register
-            </Button>
-          ) : (
-            <Button
-              variant="contained"
-              size="large"
-              className={classes.textBox}
-              to={
-                userType === 0
-                  ? `/dashboard?userId=${userId}`
-                  : `/managerDashboard?userId=${userId}`
-              }
-              component={Link}
-            >
-              Register
-            </Button>
-          )}
+          <Button
+            variant="contained"
+            size="large"
+            className={classes.textBox}
+            onClick={registrationHandler}
+          >
+            Register
+          </Button>
         </div>
       </form>
     </Paper>

@@ -85,36 +85,36 @@ function App() {
   }, []);
 
   return (
-    <UserProvider>
-      <ApolloProvider client={client}>
-        <Router>
-          <div className="App">
-            <ReactNotification />
-            <Route
-              path="/"
-              exact
-              render={(props) => <Background comp={<DiscoverDeal />} />}
-            />
-            <Route
-              path="/login"
-              exact
-              render={(props) => <Background comp={<LoginForm />} />}
-            />
-            <Route
-              path="/register"
-              render={(props) => <Background comp={<RegistrationForm />} />}
-            />
-            <Route path="/dashboard" component={UserDashboard} />
-            <Route path="/managerDashboard" component={ManagerDashboard} />
-            <Route path="/addCoupon" component={CouponForm} />
-            <Route path="/profile" component={Profile} />
-            <Route path="/logout" component={LogoutPage} />
-            <Route path="/search" component={SearchPage} />
-            <Route path="/menu" component={Menu} />
-          </div>
-        </Router>
-      </ApolloProvider>
-    </UserProvider>
+    // <UserProvider>
+    <ApolloProvider client={client}>
+      <Router>
+        <div className="App">
+          <ReactNotification />
+          <Route
+            path="/"
+            exact
+            render={(props) => <Background comp={<DiscoverDeal />} />}
+          />
+          <Route
+            path="/login"
+            exact
+            render={(props) => <Background comp={<LoginForm />} />}
+          />
+          <Route
+            path="/register"
+            render={(props) => <Background comp={<RegistrationForm />} />}
+          />
+          <Route path="/dashboard" component={UserDashboard} />
+          <Route path="/managerDashboard" component={ManagerDashboard} />
+          <Route path="/addCoupon" component={CouponForm} />
+          <Route path="/profile" component={Profile} />
+          <Route path="/logout" component={LogoutPage} />
+          <Route path="/search" component={SearchPage} />
+          <Route path="/menu" component={Menu} />
+        </div>
+      </Router>
+    </ApolloProvider>
+    // </UserProvider>
   );
 }
 

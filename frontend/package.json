@@ -16,6 +16,8 @@
     "apollo-link-http": "^1.5.17",
     "date-fns": "^2.8.1",
     "firebase": "^7.14.0",
+    "graphql": "^15.1.0",
+    "graphql-tag": "^2.10.3",
     "install": "^0.13.0",
     "material-ui-pickers": "^2.0.0",
     "mqtt": "^3.0.0",
