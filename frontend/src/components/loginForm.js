@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useStyles } from "./Styles";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
@@ -6,86 +6,63 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { Link } from "react-router-dom";
 import { useHistory } from "react-router-dom";
+import gql from "graphql-tag";
+import { useLazyQuery } from "@apollo/react-hooks";
+import { auth } from "./../firebase/firebase";
 
 function LoginForm() {
   const classes = useStyles();
   const [user, setUser] = useState(""); // user name hook
   const [password, setPassword] = useState(""); // password hook
-  const [auth, setAuth] = useState(false);
-  const [userType, setUsertype] = useState(0);
-  let temp = 0;
-  const [userId, setId] = useState(0);
-  const proxyurl = "https://cors-anywhere.herokuapp.com/";
-  const p2 = "https://elsabor-cors.herokuapp.com/";
   const history = useHistory();
 
-  // determine user type
-  const userTypeHandler = () => {
-    fetch(p2 + "https://elsabor.herokuapp.com/users/getUserType", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: `userid=${temp}`,
-    })
-      .then((response) => {
-        console.log(`Status code ${response.status}`);
-        response.text().then((result) => {
-          console.log(result);
-
-          if (response.status == 200) {
-            // eslint-disable-next-line
-            if (parseInt(result) === 1) {
-              console.log("user is a manager");
-              setUsertype(1);
-              history.push(`/managerDashboard?userId=${temp}`);
-            } else {
-              console.log("user is a regular user ");
-              setUsertype(0);
-              history.push(`/dashboard?userId=${temp}`);
-            }
-          } else {
-            alert("Please try again");
-          }
-        });
-      })
-      .catch((error) => {
-        console.error("Error: ", error);
-      });
-  };
-
-  const loginHandler = (e) => {
-    fetch(p2 + "https://elsabor.herokuapp.com/users/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: `email=${user}&password=${password}`,
-    })
-      .then((response) => {
-        console.log(`Status code ${response.status}`);
-        if (response.status === 200) {
-          setAuth(true);
-        } else {
-          setAuth(false);
-          alert("Username or password incorrect");
-        }
-        response.text().then((result) => {
-          console.log(`result: ${result}`);
-          //userId = result;
-          temp = parseInt(result);
-          setId(temp);
-          console.log(`userID set: ${temp}`);
-          userTypeHandler(); // determine user type
-        });
-      })
-      .catch((error) => {
-        console.error("Error: ", error);
-      });
-
-    if (!auth) {
-      e.preventDefault();
+  const LOGIN_QUERY = gql`
+    query Login($input: UserInput!) {
+      loginQuery(input: $input) {
+        id
+        userId
+        email
+        username
+        type
+        link
+      }
     }
+  `;
+
+  const [exeLogin, { error, data }] = useLazyQuery(LOGIN_QUERY);
+
+  if (data && data.loginQuery.userId) {
+    // redirect user to appropriate page
+    if (data.loginQuery.type === 0) {
+      history.push(`/dashboard?userId=${data.loginQuery.userId}`);
+    } else {
+      history.push(`/managerDashboard?userId=${data.loginQuery.userId}`);
+    }
+  }
+
+  if (error) {
+    console.log(`Error: ${error}`);
+  }
+
+  const loginHandler = async (e) => {
+    auth
+      .signInWithEmailAndPassword(user, password)
+      .then((data) => {
+        console.log("Getting users info");
+        exeLogin({
+          variables: { input: { email: user } },
+        });
+      })
+      .catch((e) => {
+        var errorCode = e.code;
+        var errorMessage = e.message;
+        if (errorCode === "auth/wrong-password") {
+          alert("Wrong password or username.");
+        } else {
+          alert(errorMessage);
+        }
+        console.log(`Error: ${e}`);
+      });
   };
 
   return (
@@ -99,8 +76,8 @@ function LoginForm() {
             required
             id="standard-required"
             className={classes.textBox}
-            label="Username"
-            defaultValue="Enter username"
+            label="Email"
+            defaultValue="Enter email address"
             value={user}
             onChange={(e) => setUser(e.target.value)}
             InputLabelProps={{
@@ -143,23 +120,14 @@ function LoginForm() {
         </div>
 
         <div className={classes.inputStyle}>
-          <Link
-            to={
-              userType === 0
-                ? `/dashboard?userId=${userId}`
-                : `/managerDashboard?userId=${userId}`
-            }
-            onClick={(e) => loginHandler(e)}
-            className={classes.linkStyle}
+          <Button
+            variant="contained"
+            size="large"
+            className={classes.textBox}
+            onClick={loginHandler}
           >
-            <Button
-              variant="contained"
-              size="large"
-              className={classes.textBox}
-            >
-              Login
-            </Button>
-          </Link>
+            Login
+          </Button>
         </div>
 
         <div>
