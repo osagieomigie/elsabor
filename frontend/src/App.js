@@ -18,7 +18,6 @@ import Menu from "./components/menu.js";
 import { store } from "react-notifications-component";
 import { ApolloProvider } from "@apollo/react-hooks";
 import client from "./client";
-import UserProvider from "./userProvider";
 
 const cloudMqttUrl = "mqtts://tailor.cloudmqtt.com";
 const options = {
@@ -85,7 +84,6 @@ function App() {
   }, []);
 
   return (
-    // <UserProvider>
     <ApolloProvider client={client}>
       <Router>
         <div className="App">
@@ -114,7 +112,6 @@ function App() {
         </div>
       </Router>
     </ApolloProvider>
-    // </UserProvider>
   );
 }
 

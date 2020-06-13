@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import clsx from "clsx";
 import { makeStyles, useTheme, fade } from "@material-ui/core/styles";
 import Drawer from "@material-ui/core/Drawer";
@@ -16,10 +16,12 @@ import ListItemText from "@material-ui/core/ListItemText";
 import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
 import { Link } from "react-router-dom";
+//import { auth } from "./../firebase/firebase";
+import gql from "graphql-tag";
+import { useLazyQuery } from "@apollo/react-hooks";
 import queryString from "query-string";
 
-// https://material-ui.com/components/drawers/ for more info, potentially when we use the drawer to navigate through pages
-// MIGHT NEED TO MAKE FUNCTIION TO MAKE PAGE CONTENT RESPONSIVE TO THE MENU DRAWER
+// https://material-ui.com/components/drawers/
 
 const drawerWidth = 240;
 
@@ -123,37 +125,35 @@ export default function PersistentDrawerLeft(props) {
   const [open, setOpen] = React.useState(false);
   const [userType, setUsertype] = useState(0);
   const { userId } = queryString.parse(window.location.search); // extract userId
-  const proxyurl = "https://cors-anywhere.herokuapp.com/";
-  const p2 = "https://elsabor-cors.herokuapp.com/";
-  let temp = 0;
+
+  console.log(`current userId: ${userId}`);
+
+  const USER_INFO = gql`
+    query UserInfo($input: UserInput!) {
+      user(input: $input) {
+        id
+        userId
+        email
+        username
+        type
+      }
+    }
+  `;
+
+  const [exeUserInfo, { error, data }] = useLazyQuery(USER_INFO);
+
+  if (error) {
+    console.log(`Error from userProvider.js ${error.message}`);
+  }
+
+  if (data) {
+    console.log(`UserId: ${data.loginQuery.userId}, type: ${data.user.type}`);
+    setUsertype(data.user.type);
+  }
 
   // determine user type
   const userTypeHandler = () => {
-    fetch(p2 + "https://elsabor.herokuapp.com/users/getUserType", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: `userid=${userId}`,
-    })
-      .then((response) => {
-        console.log(`Status code ${response.status}`);
-        response.text().then((result) => {
-          console.log(result);
-
-          // eslint-disable-next-line
-          if (parseInt(result) === 1) {
-            console.log("user is a manager");
-            setUsertype(1);
-          } else {
-            console.log("user is a regular user ");
-            setUsertype(0);
-          }
-        });
-      })
-      .catch((error) => {
-        console.error("Error: ", error);
-      });
+    exeUserInfo({ variables: { input: { userId: userId } } });
   };
 
   const handleDrawerOpen = () => {
@@ -171,6 +171,7 @@ export default function PersistentDrawerLeft(props) {
     console.log(searchValue);
   };
 
+  // get user type, if userId changes
   useEffect(() => {
     userTypeHandler();
     // eslint-disable-next-line
