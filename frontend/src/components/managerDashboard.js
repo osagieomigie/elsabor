@@ -4,14 +4,13 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import DealTile from "./dealTile.js";
 import Typography from "@material-ui/core/Typography";
-import PersistentDrawerLeft from "./searchHeader.js";
+import SearchHeader from "./searchHeader.js";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import { Link } from "react-router-dom";
 import queryString from "query-string";
-
-
-
+import gql from "graphql-tag";
+import { useQuery, useLazyQuery } from "@apollo/react-hooks";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -82,42 +81,59 @@ const responsive = {
 function ManagerDashboard() {
   const classes = useStyles();
   const { userId } = queryString.parse(window.location.search); // extract userId
-  const proxyurl = "https://cors-anywhere.herokuapp.com/";
-  const p2 = "https://elsabor-cors.herokuapp.com/";
 
   console.log(`userID ${userId}`);
-  const [storeDeals, setStoreDeals] = useState([]);
 
-  // get store deals
-  const getStoreDeals = () => {
-    console.log(`extracted userID ${userId}`);
-    fetch(p2 + "https://elsabor.herokuapp.com/users/getSavedDeals", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: `userid=${userId}`,
-    })
-      .then((response) => {
-        console.log(`Status code ${response.status}`);
-        response.text().then((result) => {
-          console.log(result);
-          setStoreDeals(JSON.parse(result));
-        });
-      })
-      .catch((error) => {
-        console.error("Error: ", error);
-      });
-  };
+  const MANAGER_DASHBOARD = gql`
+    query ManagerDeals($input: UserInput) {
+      savedDeals(input: $input) {
+        id
+        dealId
+        name
+        description
+        link
+        expiryDate
+      }
+    }
+  `;
+
+  const USER_INFO = gql`
+    query UserInfo($input: UserInput!) {
+      user(input: $input) {
+        id
+        userId
+        email
+        username
+        type
+      }
+    }
+  `;
+
+  const { data, loading, error } = useQuery(MANAGER_DASHBOARD, {
+    variables: { input: { userId: userId } },
+  });
+
+  const [exeUserInfo, userInfo] = useLazyQuery(USER_INFO, {
+    variables: { input: { userId: userId } },
+  });
 
   useEffect(() => {
-    getStoreDeals();
+    exeUserInfo();
     // eslint-disable-next-line
   }, [userId]);
 
+  if (error) {
+    return <p>{error.message}</p>;
+  }
+
   return (
     <div className={classes.root}>
-      <PersistentDrawerLeft />
+      {userInfo.data ? (
+        <SearchHeader usertype={userInfo.data.user.type} />
+      ) : (
+        <SearchHeader usertype={1} />
+      )}
+
       <Typography variant="h5" gutterBottom className={classes.dealStyle}>
         Promotions
       </Typography>
@@ -126,33 +142,39 @@ function ManagerDashboard() {
       </Typography>
 
       <div className={classes.favourites}>
-        <Carousel
-          swipeable={true}
-          draggable={true}
-          showDots={true}
-          responsive={responsive}
-          ssr={true} // means to render carousel on server-side.
-          autoPlaySpeed={1000}
-          keyBoardControl={true}
-          customTransition="all .5"
-          transitionDuration={500}
-          containerClass="carousel-container"
-          removeArrowOnDeviceType={["tablet", "mobile"]}
-          dotListClass="custom-dot-list-style"
-          itemClass="carousel-item-padding-40-px"
-        >
-          {storeDeals.map(({ dealid, name, desp, link, expiry }, index) => (
-            <DealTile
-              dealId={dealid}
-              deal={name}
-              description={desp}
-              qrCode={dealid}
-              expiryDate={expiry}
-              pictureLink={link}
-              key={index}
-            />
-          ))}
-        </Carousel>
+        {data ? (
+          <Carousel
+            swipeable={true}
+            draggable={true}
+            showDots={true}
+            responsive={responsive}
+            ssr={true} // means to render carousel on server-side.
+            autoPlaySpeed={1000}
+            keyBoardControl={true}
+            customTransition="all .5"
+            transitionDuration={500}
+            containerClass="carousel-container"
+            removeArrowOnDeviceType={["tablet", "mobile"]}
+            dotListClass="custom-dot-list-style"
+            itemClass="carousel-item-padding-40-px"
+          >
+            {data.savedDeals.map(
+              ({ dealId, name, description, link, expiryDate }, index) => (
+                <DealTile
+                  dealId={dealId}
+                  deal={name}
+                  description={description}
+                  qrCode={dealId}
+                  expiryDate={expiryDate}
+                  pictureLink={link}
+                  key={index}
+                />
+              )
+            )}
+          </Carousel>
+        ) : (
+          <p>Loading....</p>
+        )}
 
         <Link to={`/addCoupon?userId=${userId}`} className={classes.linkStyle}>
           <Card className={classes.card}>
