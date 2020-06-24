@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-
 import DealTile from "./dealTile.js";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import Typography from "@material-ui/core/Typography";
 import PersistentDrawerLeft from "./searchHeader.js";
 import queryString from "query-string";
+import gql from "graphql-tag";
+import { useQuery, useLazyQuery } from "@apollo/react-hooks";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -71,64 +72,68 @@ const responsive = {
 
 function UserDashboard() {
   const classes = useStyles();
-  const [savedDeals, setSavedDeals] = useState([]);
-  const [discoverDeals, setDiscoverDeals] = useState([]);
   const [changes, setChanges] = useState(false);
-  const proxyurl = "https://cors-anywhere.herokuapp.com/";
-  const p2 = "https://elsabor-cors.herokuapp.com/";
   const { userId } = queryString.parse(window.location.search); // extract userId
+
+  const SAVED_DEALS = gql`
+    query Saved_Deals($input: UserInput) {
+      savedDeals(input: $input) {
+        id
+        dealId
+        userId
+        name
+        description
+        link
+        expiryDate
+      }
+    }
+  `;
+
+  // get saved deals
+  const [callSavedDeals, { loading, error, data }] = useLazyQuery(SAVED_DEALS, {
+    variables: { input: { userId: userId } },
+  });
+
+  const DISCOVER_DEALS = gql`
+    query Dis_Deals {
+      deals {
+        id
+        dealId
+        userId
+        name
+        description
+        link
+        expiryDate
+      }
+    }
+  `;
+
+  // get all current deals
+  const [callDisDeals, dis_deals_response] = useLazyQuery(DISCOVER_DEALS);
 
   const handleChange = (value) => {
     setChanges(value);
   };
 
-  // get saved deals
-  const getSavedDeals = () => {
-    console.log(`extracted userID ${userId}`);
-    fetch(p2 + "https://elsabor.herokuapp.com/users/getSavedDeals", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: `userid=${userId}`,
-    })
-      .then((response) => {
-        console.log(`Status code ${response.status}`);
-        response.text().then((result) => {
-          console.log(result);
-          setSavedDeals(JSON.parse(result));
-        });
-      })
-      .catch((error) => {
-        console.error("Error: ", error);
-      });
-  };
-
-  const getDeals = () => {
-    fetch(p2 + "https://elsabor.herokuapp.com/users/getDeals")
-      .then((response) => {
-        console.log(`Status code ${response.status}`);
-        response.text().then((result) => {
-          console.log(result);
-          setDiscoverDeals(JSON.parse(result));
-        });
-      })
-      .catch((error) => {
-        console.error("Error: ", error);
-      });
-  };
-
   useEffect(() => {
-    getSavedDeals();
-    getDeals(); // get deals
+    callSavedDeals();
+    callDisDeals();
     // eslint-disable-next-line
   }, [userId]);
 
   useEffect(() => {
-    getSavedDeals();
+    callSavedDeals();
     handleChange(false);
     // eslint-disable-next-line
   }, [changes]);
+
+  if (error) {
+    return <p>{error.message}</p>;
+  }
+
+  if (dis_deals_response.error) {
+    return <p>{dis_deals_response.error.message}</p>;
+  }
 
   return (
     <div className={classes.root}>
@@ -139,35 +144,41 @@ function UserDashboard() {
       <Typography variant="subtitle1" gutterBottom className={classes.textB}>
         Deals you have saved
       </Typography>
-      <div className={classes.favourites}>
-        <Carousel
-          swipeable={true}
-          draggable={true}
-          showDots={true}
-          responsive={responsive}
-          ssr={true} // means to render carousel on server-side.
-          autoPlaySpeed={1000}
-          keyBoardControl={true}
-          customTransition="all .5"
-          transitionDuration={500}
-          containerClass="carousel-container"
-          removeArrowOnDeviceType={["tablet", "mobile"]}
-          dotListClass="custom-dot-list-style"
-          itemClass="carousel-item-padding-40-px"
-        >
-          {savedDeals.map(({ dealid, name, desp, link, expiry }, index) => (
-            <DealTile
-              dealId={dealid}
-              deal={name}
-              description={desp}
-              qrCode={dealid}
-              expiryDate={expiry}
-              pictureLink={link}
-              key={index}
-            />
-          ))}
-        </Carousel>
-      </div>
+      {data ? (
+        <div className={classes.favourites}>
+          <Carousel
+            swipeable={true}
+            draggable={true}
+            showDots={true}
+            responsive={responsive}
+            ssr={true} // means to render carousel on server-side.
+            autoPlaySpeed={1000}
+            keyBoardControl={true}
+            customTransition="all .5"
+            transitionDuration={500}
+            containerClass="carousel-container"
+            removeArrowOnDeviceType={["tablet", "mobile"]}
+            dotListClass="custom-dot-list-style"
+            itemClass="carousel-item-padding-40-px"
+          >
+            {data.savedDeals.map(
+              ({ dealid, name, description, link, expiryDate }, index) => (
+                <DealTile
+                  dealId={dealid}
+                  deal={name}
+                  description={description}
+                  qrCode={dealid}
+                  expiryDate={expiryDate}
+                  pictureLink={link}
+                  key={index}
+                />
+              )
+            )}
+          </Carousel>
+        </div>
+      ) : (
+        <p>Loading...</p>
+      )}
       <Typography variant="h5" gutterBottom className={classes.discover}>
         Discover Deals
       </Typography>
@@ -175,36 +186,42 @@ function UserDashboard() {
         Active deals
       </Typography>
 
-      <div className={classes.favourites}>
-        <Carousel
-          swipeable={true}
-          draggable={true}
-          showDots={true}
-          responsive={responsive}
-          ssr={true} // means to render carousel on server-side.
-          autoPlaySpeed={1000}
-          keyBoardControl={true}
-          customTransition="all .5"
-          transitionDuration={500}
-          containerClass="carousel-container"
-          removeArrowOnDeviceType={["tablet", "mobile"]}
-          dotListClass="custom-dot-list-style"
-          itemClass="carousel-item-padding-40-px"
-        >
-          {discoverDeals.map(({ dealid, name, desp, link, expiry }, index) => (
-            <DealTile
-              dealId={dealid}
-              deal={name}
-              description={desp}
-              qrCode={dealid}
-              expiryDate={expiry}
-              pictureLink={link}
-              handleChange={handleChange}
-              key={index}
-            />
-          ))}
-        </Carousel>
-      </div>
+      {dis_deals_response.data ? (
+        <div className={classes.favourites}>
+          <Carousel
+            swipeable={true}
+            draggable={true}
+            showDots={true}
+            responsive={responsive}
+            ssr={true} // render carousel on server-side.
+            autoPlaySpeed={1000}
+            keyBoardControl={true}
+            customTransition="all .5"
+            transitionDuration={500}
+            containerClass="carousel-container"
+            removeArrowOnDeviceType={["tablet", "mobile"]}
+            dotListClass="custom-dot-list-style"
+            itemClass="carousel-item-padding-40-px"
+          >
+            {dis_deals_response.data.deals.map(
+              ({ dealid, name, description, link, expiryDate }, index) => (
+                <DealTile
+                  dealId={dealid}
+                  deal={name}
+                  description={description}
+                  qrCode={dealid}
+                  expiryDate={expiryDate}
+                  pictureLink={link}
+                  handleChange={handleChange}
+                  key={index}
+                />
+              )
+            )}
+          </Carousel>
+        </div>
+      ) : (
+        <p>Loading...</p>
+      )}
     </div>
   );
 }
