@@ -4,7 +4,7 @@ import DealTile from "./dealTile.js";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import Typography from "@material-ui/core/Typography";
-import PersistentDrawerLeft from "./searchHeader.js";
+import SearchHeader from "./searchHeader.js";
 import queryString from "query-string";
 import gql from "graphql-tag";
 import { useQuery, useLazyQuery } from "@apollo/react-hooks";
@@ -111,6 +111,23 @@ function UserDashboard() {
   // get all current deals
   const [callDisDeals, dis_deals_response] = useLazyQuery(DISCOVER_DEALS);
 
+  // get user info for search hearder
+  const USER_INFO = gql`
+    query UserInfo($input: UserInput!) {
+      user(input: $input) {
+        id
+        userId
+        email
+        username
+        type
+      }
+    }
+  `;
+
+  const { userInfo } = useQuery(USER_INFO, {
+    variables: { input: { userId: userId } },
+  });
+
   const handleChange = (value) => {
     setChanges(value);
   };
@@ -137,7 +154,7 @@ function UserDashboard() {
 
   return (
     <div className={classes.root}>
-      <PersistentDrawerLeft />
+      <SearchHeader usertype={userInfo.data.type} />
       <Typography variant="h5" gutterBottom className={classes.saved}>
         Your Favourites
       </Typography>
