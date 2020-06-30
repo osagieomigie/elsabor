@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Typography, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import PersistentDrawerLeft from "./searchHeader.js";
+import SearchHeader from "./searchHeader.js";
 import queryString from "query-string";
+import { auth } from "./../firebase/firebase";
+import gql from "graphql-tag";
+import { useQuery, useLazyQuery } from "@apollo/react-hooks";
 
 const styleMessage = {
   width: "38ch",
@@ -19,48 +22,37 @@ const styleButton = {
 
 export default function LogoutPage() {
   const { userId } = queryString.parse(window.location.search); // extract userId
-  let temp = "";
-  const [userType, setUsertype] = useState(0);
-  // eslint-disable-next-line
-  const proxyurl = "https://cors-anywhere.herokuapp.com/";
-  const p2 = "https://elsabor-cors.herokuapp.com/";
 
-  // determine user type
-  const userTypeHandler = () => {
-    fetch(p2 + "https://elsabor.herokuapp.com/users/getUserType", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: `userid=${userId}`,
-    })
-      .then((response) => {
-        console.log(`Status code ${response.status}`);
-        response.text().then((result) => {
-          console.log(result);
+  // get user info for search hearder
+  const USER_INFO = gql`
+    query UserInfo($input: UserInput!) {
+      user(input: $input) {
+        id
+        userId
+        email
+        username
+        type
+      }
+    }
+  `;
 
-          // eslint-disable-next-line
-          if (parseInt(result) === 1) {
-            console.log("user is a manager");
-            setUsertype(1);
-          } else {
-            console.log("user is a regular user ");
-            setUsertype(0);
-          }
-        });
-      })
-      .catch((error) => {
-        console.error("Error: ", error);
-      });
+  const { data, loading, error } = useQuery(USER_INFO, {
+    variables: { input: { userId: userId } },
+  });
+
+  if (loading) {
+    return <p>loading...</p>;
+  }
+
+  // callback for when user clicks logout button
+  const handleLogout = () => {
+    auth.signOut();
   };
 
-  useEffect(() => {
-    userTypeHandler();
-    // eslint-disable-next-line
-  }, []);
   return (
     <div>
-      <PersistentDrawerLeft />
+      <SearchHeader usertype={1} />
+
       <div style={styleMessage}>
         <Typography variant="h4">Do you want to logout of el sabor?</Typography>
         <Typography variant="h6">
@@ -69,11 +61,16 @@ export default function LogoutPage() {
         </Typography>
         <div>
           <Link to={"/login"}>
-            <Button variant="contained" color="secondary" style={styleButton}>
+            <Button
+              variant="contained"
+              color="secondary"
+              style={styleButton}
+              onClick={handleLogout}
+            >
               logout
             </Button>
           </Link>
-          {userType === 0 ? (
+          {data.user.type === 0 ? (
             <Link to={`/dashboard?userId=${userId}`}>
               <Button variant="contained" style={styleButton}>
                 cancel
