@@ -2,26 +2,14 @@ import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import SearchHeader from "./searchHeader";
-import clsx from "clsx";
-import Card from "@material-ui/core/Card";
-import CardHeader from "@material-ui/core/CardHeader";
-import CardMedia from "@material-ui/core/CardMedia";
-import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
-import Collapse from "@material-ui/core/Collapse";
-import Avatar from "@material-ui/core/Avatar";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
 import { red } from "@material-ui/core/colors";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import ShareIcon from "@material-ui/icons/Share";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
 import { Grid } from "@material-ui/core";
 import { storage } from "../firebase/firebase.js";
 import queryString from "query-string";
 import Lightbox from "react-image-lightbox";
-import "react-image-lightbox/style.css"; // This only needs to be imported once in your app
+import "react-image-lightbox/style.css";
+import gql from "graphql-tag";
+import { useQuery, useMutation } from "@apollo/react-hooks";
 
 const useStyles = makeStyles((theme) => ({
   // General CSS settings
@@ -56,44 +44,67 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// const { userid } = queryString.parse(window.location.search); // extract userId
-// TODO: change the userid here
-let userid = 3;
+const { userid } = queryString.parse(window.location.search); // extract userId
 
 function Menu() {
   const classes = useStyles();
-  const proxyurl = "https://elsabor-cors.herokuapp.com/";
+  const [imageAsFile, setImageAsFile] = useState("");
   const [imageAsUrl, setImageAsUrl] = useState("");
   const [expanded, setExpanded] = React.useState(false);
-  const [menu, setMenus] = useState([]);
+  const [isOpen, setIsopen] = useState(false);
+  //const [menu, setMenus] = useState([]);
+  let menu = [];
   const [picState, setPicState] = useState({ photoIndex: 0 });
 
-  const getMenus = () => {
-    fetch(proxyurl + "https://elsabor.herokuapp.com/users/getMenus")
-      .then((response) => {
-        console.log(`Status code ${response.status}`);
-        response.text().then((result) => {
-          console.log(result);
-          setMenus(JSON.parse(result));
-        });
-      })
-      .catch((error) => {
-        console.error("Error: ", error);
-      });
+  const MENU_QUERY = gql`
+    query GetMenus {
+      menu {
+        id
+        menuId
+        userId
+        link
+      }
+    }
+  `;
+
+  const menuResponse = useQuery(MENU_QUERY);
+
+  const MENU_MUTATION = gql`
+    mutation AddMenu($input: MenuInput) {
+      addMenu(input: $input) {
+        id
+        menuId
+        userId
+        link
+      }
+    }
+  `;
+
+  const [addMenu, addMenuResponse] = useMutation(MENU_MUTATION);
+
+  if (menuResponse.loading) {
+    return <p>Loading menus...</p>;
+  }
+
+  if (menuResponse.error) {
+    return <p>{menuResponse.error.message}</p>;
+  }
+
+  if (menuResponse.data) {
+    menuResponse.data.menu.map(({ link }) => {
+      console.log(`link: ${link}`);
+      menu.push(link);
+    });
+  }
+
+  // once firebase returns the image link store it
+  let addMenuHelper = (fireLink) => {
+    addMenu({ variables: { input: { link: fireLink } } });
   };
 
   const handleImageAsFile = (e) => {
-    const [file] = e.target.files;
-    if (file) {
-      const reader = new FileReader();
-      const { current } = uploadedImage;
-      current.file = file;
-      reader.onload = (e) => {
-        current.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-    handleFireBaseUpload();
+    const image = e.target.files[0];
+    setImageAsFile((imageFile) => image);
   };
 
   const handleExpandClick = () => {
@@ -102,12 +113,15 @@ function Menu() {
 
   // in this function we would handle the firebase image upload and also the adding deal from the textFields
   const handleFireBaseUpload = (e) => {
+    e.preventDefault();
     console.log("start of upload");
-    console.log(uploadedImage.current.file);
 
+    if (imageAsFile === "") {
+      console.log(`not an image, the image file is a ${typeof imageAsFile}`);
+    }
     const uploadTask = storage
-      .ref(`/images/menu/${uploadedImage.current.file.name}`)
-      .put(uploadedImage.current.file);
+      .ref(`/images/deal/${imageAsFile.name}`)
+      .put(imageAsFile);
     //initiates the firebase side uploading
     uploadTask.on(
       "state_changed",
@@ -119,72 +133,54 @@ function Menu() {
         //catches the errors
         console.log(err);
       },
-      function () {
-        uploadTask.snapshot.ref.getDownloadURL().then(function (downloadURL) {
-          console.log("File available at", downloadURL);
-          setImageAsUrl(downloadURL);
-          addMenu();
-        });
+      () => {
+        // gets the functions from storage refences the image storage in firebase by the children
+        // gets the download url then sets the image from firebase as the value for the imgUrl key:
+        storage
+          .ref("images/menu")
+          .child(imageAsFile.name)
+          .getDownloadURL()
+          .then((fireBaseUrl) => {
+            setImageAsUrl((prevObject) => ({
+              ...prevObject,
+              imgUrl: fireBaseUrl,
+            }));
+            console.log(`firebase url ${fireBaseUrl}`);
+            addMenuHelper(fireBaseUrl);
+          })
+          .catch((error) => {
+            console.error("Error: ", error);
+            alert("Error during upload, please try again");
+          });
       }
     );
   };
 
-  const addMenu = async function (e) {
-    fetch(proxyurl + "https://elsabor.herokuapp.com/users/addMenu", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        link: imageAsUrl,
-        userid: userid,
-      }),
-    })
-      .then((response) => {
-        console.log(`Status code ${response.status}`);
-        response.text().then((result) => {
-          console.log(result);
-        });
-      })
-      .catch((error) => {
-        console.error("Error: ", error);
-      });
-  };
-
-  let dealImages = [];
-  useEffect(() => {
-    getMenus();
-
-    menu.map(({ link }) => {
-      console.log(link);
-      dealImages.push(link);
-    });
-  }, []);
-
-  // For the manager uplaoding an image
-  const uploadedImage = React.useRef(null);
-
-  function FormCard() {
+  function MenuGallery() {
     const { photoIndex } = picState;
     return (
-      <Lightbox
-        mainSrc={dealImages[photoIndex]}
-        nextSrc={dealImages[(photoIndex + 1) % dealImages.length]}
-        prevSrc={
-          dealImages[(photoIndex + dealImages.length - 1) % dealImages.length]
-        }
-        onMovePrevRequest={() =>
-          setPicState({
-            photoIndex:
-              (photoIndex + dealImages.length - 1) % dealImages.length,
-          })
-        }
-        onMoveNextRequest={() =>
-          setPicState({
-            photoIndex: (photoIndex + 1) % dealImages.length,
-          })
-        }
-      />
+      <div>
+        <button type="button" onClick={() => setIsopen(true)}>
+          View Menus
+        </button>
+        {isOpen && (
+          <Lightbox
+            mainSrc={menu[photoIndex]}
+            nextSrc={menu[(photoIndex + 1) % menu.length]}
+            prevSrc={menu[(photoIndex + menu.length - 1) % menu.length]}
+            onMovePrevRequest={() =>
+              setPicState({
+                photoIndex: (photoIndex + menu.length - 1) % menu.length,
+              })
+            }
+            onMoveNextRequest={() =>
+              setPicState({
+                photoIndex: (photoIndex + 1) % menu.length,
+              })
+            }
+          />
+        )}
+      </div>
     );
   }
 
@@ -209,7 +205,7 @@ function Menu() {
           </label>
         </Grid>
         <Grid item className={classes.bottomSide} xs={4}>
-          <FormCard />
+          <MenuGallery />
         </Grid>
       </Grid>
     </div>
