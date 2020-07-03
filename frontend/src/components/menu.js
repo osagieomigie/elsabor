@@ -1,23 +1,43 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import SearchHeader from "./searchHeader";
 import { red } from "@material-ui/core/colors";
-import { Grid } from "@material-ui/core";
 import { storage } from "../firebase/firebase.js";
 import queryString from "query-string";
 import Lightbox from "react-image-lightbox";
 import "react-image-lightbox/style.css";
 import gql from "graphql-tag";
 import { useQuery, useMutation } from "@apollo/react-hooks";
+import Typography from "@material-ui/core/Typography";
 
 const useStyles = makeStyles((theme) => ({
-  // General CSS settings
   root: {
     display: "flex",
     flexWrap: "wrap",
     backgroundColor: "rgb(243, 244, 246)",
     height: "100%",
+  },
+  menuStyle: {
+    marginTop: "3em",
+    textAlign: "left",
+    marginBottom: "0%",
+    [theme.breakpoints.down("sm")]: {
+      marginTop: "35%",
+      marginBottom: "3%",
+    },
+    [theme.breakpoints.between("sm", "md")]: {
+      marginTop: "15%",
+      marginBottom: "0%",
+    },
+  },
+  divRoot: {
+    width: "50vh",
+    position: "absolute",
+    left: "45%",
+    top: "35%",
+    transform: "translate(-45%, -45%)",
+    marginTop: "60px",
   },
   input: {
     display: "none",
@@ -42,6 +62,15 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     backgroundColor: red[500],
   },
+  fieldDivider: {
+    paddingBottom: "1em",
+  },
+  buttonDivider: {
+    paddingBottom: "1em",
+  },
+  submitButton: {
+    width: "60vh",
+  },
 }));
 
 const { userid } = queryString.parse(window.location.search); // extract userId
@@ -50,9 +79,8 @@ function Menu() {
   const classes = useStyles();
   const [imageAsFile, setImageAsFile] = useState("");
   const [imageAsUrl, setImageAsUrl] = useState("");
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [isOpen, setIsopen] = useState(false);
-  //const [menu, setMenus] = useState([]);
   let menu = [];
   const [picState, setPicState] = useState({ photoIndex: 0 });
 
@@ -168,6 +196,7 @@ function Menu() {
             mainSrc={menu[photoIndex]}
             nextSrc={menu[(photoIndex + 1) % menu.length]}
             prevSrc={menu[(photoIndex + menu.length - 1) % menu.length]}
+            onCloseRequest={() => setIsopen(false)}
             onMovePrevRequest={() =>
               setPicState({
                 photoIndex: (photoIndex + menu.length - 1) % menu.length,
@@ -186,28 +215,33 @@ function Menu() {
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={1}>
-        <Grid item className={classes.header} xs={12}>
-          <SearchHeader />
-        </Grid>
-        <Grid item className={classes.topSide} xs={4}>
+      <SearchHeader />
+      <Typography variant="h4" gutterBottom className={classes.menuStyle}>
+        Menus
+      </Typography>
+      <div className={classes.divRoot}>
+        <div className={classes.fieldDivider}>
           <input
             accept="image/x-png,image/jpeg"
-            className={classes.input}
             onChange={handleImageAsFile}
             id="icon-button-file"
             type="file"
           />
-          <label htmlFor="contained-button-file">
-            <Button variant="contained" color="primary" component="span">
-              Upload Menu Picture
-            </Button>
-          </label>
-        </Grid>
-        <Grid item className={classes.bottomSide} xs={4}>
+        </div>
+        <div className={classes.buttonDivider}>
+          <Button
+            variant="contained"
+            color="secondary"
+            component="span"
+            onClick={handleFireBaseUpload}
+          >
+            Upload Menu
+          </Button>
+        </div>
+        <div>
           <MenuGallery />
-        </Grid>
-      </Grid>
+        </div>
+      </div>
     </div>
   );
 }
