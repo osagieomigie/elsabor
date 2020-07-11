@@ -8,7 +8,7 @@ import {
   Button,
 } from "@material-ui/core";
 import { storage } from "../firebase/firebase.js";
-import PersistentDrawerLeft from "./searchHeader.js";
+import SearchHeader from "./searchHeader.js";
 import DateFnsUtils from "@date-io/date-fns";
 import {
   KeyboardDatePicker,
@@ -16,44 +16,45 @@ import {
 } from "@material-ui/pickers";
 import "date-fns";
 import queryString from "query-string";
+import gql from "graphql-tag";
+import { useQuery, useMutation } from "@apollo/react-hooks";
 
-const useStyles = makeStyles ((theme) => ({
-    divRoot: {
-        width: '50vh',
-        position: 'absolute', left: '45%', top: '45%',
-        transform: 'translate(-45%, -45%)',
-        marginTop: '60px',
-    },
-    title: {
-        position: 'relative', left: '18%',
-    },
-    inputField: {
-        width: '60vh',
-    },
-    fieldDivider: {
-        paddingTop: '20px',
-    },
-    fieldDivider: {
-        paddingTop: '20px',
-    },
-    bottomDivider: {
-        justifyContent: 'left',
-    },
-    submitButton: {
-        width: '60vh',
-    },
-    buttonDivider: {
-        paddingTop: '40px',
-    },
+const useStyles = makeStyles((theme) => ({
+  divRoot: {
+    width: "50vh",
+    position: "absolute",
+    left: "45%",
+    top: "45%",
+    transform: "translate(-45%, -45%)",
+    marginTop: "60px",
+  },
+  title: {
+    position: "relative",
+    left: "18%",
+  },
+  inputField: {
+    width: "60vh",
+  },
+  fieldDivider: {
+    paddingTop: "20px",
+  },
+  fieldDivider: {
+    paddingTop: "20px",
+  },
+  bottomDivider: {
+    justifyContent: "left",
+  },
+  submitButton: {
+    width: "60vh",
+  },
+  buttonDivider: {
+    paddingTop: "40px",
+  },
 }));
 
 export default function CouponForm() {
   const classes = useStyles();
-  const proxyurl = "https://cors-anywhere.herokuapp.com/";
-  const p2 = "https://elsabor-cors.herokuapp.com/";
   const { userId } = queryString.parse(window.location.search); // extract userId
-  let firebaseLink = "";
-  let dealId = "";
 
   const allInputs = { imgUrl: "" };
   const [imageAsFile, setImageAsFile] = useState("");
@@ -128,65 +129,69 @@ export default function CouponForm() {
     setChecked(event.target.checked);
   };
 
+  const ADDDEALMUTATION = gql`
+    mutation NewDeal($input: AddDealInput) {
+      addDeal(input: $input) {
+        id
+        dealId
+        userId
+        name
+        description
+        link
+        expiryDate
+      }
+    }
+  `;
+
+  const [callAddDeal, addDealResponse] = useMutation(ADDDEALMUTATION);
+
   // add deal
   const addDeal = (firebaseLink) => {
-    let data = {
-      name: dealName,
-      desp: description,
-      link: firebaseLink,
-      userid: userId,
-      expiry: selectedDate,
-    };
     console.log(`extracted userID ${userId}`);
-    fetch(p2 + "https://elsabor.herokuapp.com/users/addDeal", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+
+    callAddDeal({
+      variables: {
+        input: {
+          userId: userId,
+          name: dealName,
+          description: description,
+          link: firebaseLink,
+          expiryDate: selectedDate,
+        },
       },
-      body: JSON.stringify(data),
-    })
-      .then((response) => {
-        console.log(`Status code ${response.status}`);
-        response.text().then((result) => {
-          console.log(result);
-          dealId = result;
-          alert("Deal upload done, enjoy!");
-          addDealStore(); // store deal in saved deals table
-        });
-      })
-      .catch((error) => {
-        console.error("Error: ", error);
-      });
+    }).then(() => {
+      alert("Deal Added");
+    });
   };
 
-  // add deal to user account
-  const addDealStore = () => {
-    let data = {
-      userid: userId,
-      dealid: dealId,
-    };
-    console.log(`userID: ${userId} dealID: ${dealId}`);
-    fetch(p2 + "https://elsabor.herokuapp.com/users/addSavedDeal", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => {
-        console.log(`Status code ${response.status}`);
-        response.text().then((result) => {
-          console.log(result);
-        });
-      })
-      .catch((error) => {
-        console.error("Error: ", error);
-      });
-  };
+  const USER_INFO = gql`
+    query UserInfo($input: UserInput!) {
+      user(input: $input) {
+        id
+        userId
+        email
+        username
+        type
+      }
+    }
+  `;
+
+  const { data, loading, error } = useQuery(USER_INFO, {
+    variables: { input: { userId: userId } },
+  });
+
+  // error handling
+  if (addDealResponse.error) {
+    return <p>{addDealResponse.error.message}</p>;
+  }
 
   return (
     <div className={classes.root}>
-      <PersistentDrawerLeft />
+      {data ? (
+        <SearchHeader usertype={data.user.type} />
+      ) : (
+        <SearchHeader usertype={1} />
+      )}
       <div className={classes.divRoot}>
         <Typography className={classes.title} variant="h3">
           Add Promotion
