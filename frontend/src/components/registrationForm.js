@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useStyles } from "./Styles";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
@@ -9,6 +9,7 @@ import { useHistory } from "react-router-dom";
 import gql from "graphql-tag";
 import { useMutation } from "@apollo/react-hooks";
 import { auth } from "./../firebase/firebase";
+import { UserContext } from "./../userContext.js";
 
 function RegistrationForm() {
   const classes = useStyles();
@@ -17,6 +18,7 @@ function RegistrationForm() {
   const [password, setPassword] = useState(""); // password hook
   const [userType, setUserType] = useState(1);
   const history = useHistory();
+  const { currentUser, setCurrentUser } = useContext(UserContext);
 
   const REGISTER_MUTATION = gql`
     mutation RegisterUser($input: AddUserInput!) {
@@ -61,8 +63,10 @@ function RegistrationForm() {
             input: { username: user, email: email, type: userType },
           },
         });
+        setCurrentUser({ user: user, loggedIn: true });
       })
       .catch((e) => {
+        setCurrentUser({ user: user, loggedIn: false });
         console.log(`Error: ${e}`);
         alert(`Error: ${e}`);
       });

@@ -1,12 +1,15 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { useState } from "react";
 import { auth } from "./firebase/firebase";
 import gql from "graphql-tag";
 import { useLazyQuery } from "@apollo/react-hooks";
-
-export const UserContext = createContext({ user: null });
+import App from "./App";
+import { UserContext } from "./userContext.js";
 
 function UserProvider() {
-  const [user, setUser] = useState({ user: null, loggedIn: false });
+  const [currentUser, setCurrentUser] = useState({
+    user: null,
+    loggedIn: false,
+  });
 
   const USER_INFO = gql`
     query UserInfo($input: UserInput!) {
@@ -27,29 +30,36 @@ function UserProvider() {
     console.log(`Error from userProvider.js ${error.message}`);
   }
 
-  if (data.loginQuery.userId) {
-    console.log(`UserId: ${data.loginQuery.userId}`);
-    setUser({ ...data.loginQuery, loggedIn: true });
-  }
+  // if (data.loginQuery.userId) {
+  //   console.log(`UserId: ${data.loginQuery.userId}`);
+  //   setCurrentUser({ ...data.loginQuery.userId, loggedIn: true });
+  // }
 
   const authState = async () => {
     await auth.onAuthStateChanged(async (userAuth) => {
       if (userAuth) {
         exeUserInfo({ variables: { input: { email: userAuth.email } } });
+        setCurrentUser({ user: "active", loggedIn: true });
       } else {
-        setUser({ loggedIn: false });
+        setCurrentUser({ user: null, loggedIn: false });
       }
     });
   };
 
-  useEffect(() => {
-    const unsubsribe = authState();
-    return () => {
-      authState();
-    };
-  });
+  // useEffect(() => {
+  //   const unsubscribe = () => {
+  //     authState();
+  //   };
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // });
 
-  return <UserContext.Provider value={user}></UserContext.Provider>;
+  return (
+    <UserContext.Provider value={{ currentUser, setCurrentUser }}>
+      <App />
+    </UserContext.Provider>
+  );
 }
 
 export default UserProvider;

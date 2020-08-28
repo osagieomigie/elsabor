@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useStyles } from "./Styles";
 import TextField from "@material-ui/core/TextField";
 import Paper from "@material-ui/core/Paper";
@@ -9,12 +9,14 @@ import { useHistory } from "react-router-dom";
 import gql from "graphql-tag";
 import { useLazyQuery } from "@apollo/react-hooks";
 import { auth } from "./../firebase/firebase";
+import { UserContext } from "./../userContext";
 
 function LoginForm() {
   const classes = useStyles();
   const [user, setUser] = useState(""); // user name hook
   const [password, setPassword] = useState(""); // password hook
   const history = useHistory();
+  const { currentUser, setCurrentUser } = useContext(UserContext);
 
   const LOGIN_QUERY = gql`
     query Login($input: UserInput!) {
@@ -32,6 +34,8 @@ function LoginForm() {
   const [exeLogin, { error, data }] = useLazyQuery(LOGIN_QUERY);
 
   if (data && data.loginQuery.userId) {
+    setCurrentUser({ user: user, loggedIn: true });
+
     // redirect user to appropriate page
     if (data.loginQuery.type === 0) {
       history.push(`/dashboard?userId=${data.loginQuery.userId}`);
@@ -56,6 +60,7 @@ function LoginForm() {
       .catch((e) => {
         var errorCode = e.code;
         var errorMessage = e.message;
+        setCurrentUser({ user: null, loggedIn: false });
         if (errorCode === "auth/wrong-password") {
           alert("Wrong password or username.");
         } else {

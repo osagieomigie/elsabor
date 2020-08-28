@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext } from "react";
 import { Typography, Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import SearchHeader from "./searchHeader.js";
@@ -6,6 +6,7 @@ import queryString from "query-string";
 import { auth } from "./../firebase/firebase";
 import gql from "graphql-tag";
 import { useQuery, useLazyQuery } from "@apollo/react-hooks";
+import { UserContext } from "./../userContext";
 
 const styleMessage = {
   width: "38ch",
@@ -22,6 +23,7 @@ const styleButton = {
 
 export default function LogoutPage() {
   const { userId } = queryString.parse(window.location.search); // extract userId
+  const { currentUser, setCurrentUser } = useContext(UserContext);
 
   // get user info for search hearder
   const USER_INFO = gql`
@@ -47,6 +49,7 @@ export default function LogoutPage() {
   // callback for when user clicks logout button
   const handleLogout = () => {
     auth.signOut();
+    setCurrentUser({ user: null, loggedIn: false });
   };
 
   return (
