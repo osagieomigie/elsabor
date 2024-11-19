@@ -16,7 +16,7 @@
     "apollo-client": "^2.6.10",
     "apollo-link-http": "^1.5.17",
     "date-fns": "^2.8.1",
-    "firebase": "^7.14.0",
+    "firebase": "^10.9.0",
     "graphql": "^15.1.0",
     "graphql-tag": "^2.10.3",
     "install": "^0.13.0",
